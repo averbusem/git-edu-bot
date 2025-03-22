@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        name: Sort imports with isort
+
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
+    hooks:
+      - id: autopep8
+        name: Format code with autopep8
+        args: [--in-place, --aggressive, --max-line-length=100]
