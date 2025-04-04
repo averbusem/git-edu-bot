@@ -9,7 +9,9 @@ router = Router()
 
 @router.callback_query(F.data == "practice_button")
 async def practice_choice_button(callback_query: CallbackQuery, state: FSMContext):
-    # Выбор типа практики: тест или задание
-    await callback_query.message.edit_text(f"Вы выбрали 'Практиковаться'\n\n"
-                                           f"Выберите тип практики",
-                                           reply_markup=practice_choice_keyboard())
+
+    await callback_query.message.edit_text(
+        "<b>Вы выбрали 'Практиковаться'! 🚀</b>\n\n"
+        "Пожалуйста, выберите тип практики: 📝 тест или 🛠 задание.",
+        reply_markup=practice_choice_keyboard()
+    )
