@@ -59,7 +59,7 @@ def next_massage_keyboard():
 def tests_list_keyboard():
     keyboard = InlineKeyboardBuilder()
     lessons = [
-        ("Test 1", "test1"),
+        ("Тест 1", "test1"),
         ("Тест 2", "test2"),
         ("Тест 3", "test3"),
         ("Тест 4", "test4"),
