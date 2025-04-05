@@ -1,13 +1,13 @@
 from aiogram import Router
 
-from src.bot.handlers.theory import theory_list
+from src.bot.handlers.theories import theories_list
 
 
 def get_handlers_router() -> Router:
     from src.bot.handlers import commands, menu, practice_choice, progress
-    from src.bot.handlers.practice import get_practice_router
+    from src.bot.handlers.tasks import get_practice_router
     from src.bot.handlers.tests import get_tests_router
-    from src.bot.handlers.theory import get_theory_router
+    from src.bot.handlers.theories import get_theory_router
 
     router = Router()
     router.include_router(commands.router)
