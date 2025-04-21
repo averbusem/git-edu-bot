@@ -12,7 +12,7 @@ from src.bot.utils.practice_formatter import format_task_feedback
 
 PRACTICE_DATA = get_practice_data(1)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
-TASKS = PRACTICE_DATA.get("tasks", {})
+TASKS = PRACTICE_DATA.get("practices", {})
 
 
 router = Router()

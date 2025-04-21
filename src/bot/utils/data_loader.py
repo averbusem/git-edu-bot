@@ -39,7 +39,7 @@ def get_practice_data(practice_number: int) -> dict:
     все списки строк в единые строки.
     """
     file_name = f"practice{practice_number}.json"
-    full_path = os.path.join(DATA_DIR, "tasks", file_name)
+    full_path = os.path.join(DATA_DIR, "practices", file_name)
     data = load_json(full_path)
 
     def merge_lists(item, key=None):

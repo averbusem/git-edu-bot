@@ -16,7 +16,7 @@ def get_practice_feedback(practice_data: dict, task_key: str, error_key: str) ->
     Загружает JSON практики по её номеру, берёт из него нужное задание
     и возвращает отформатированный текст ошибки + подсказку.
     """
-    task_data = practice_data.get("tasks", {}).get(task_key)
+    task_data = practice_data.get("practices", {}).get(task_key)
     if not task_data:
         return "❌ Задание не найдено."
 
