@@ -60,6 +60,15 @@ class Database:
         test_result = user_info["tests_marks"][f"test{test_number}"]["mark"]
         return test_result
 
+    async def get_current_activity(self, user_id: int, activity: str):
+        user_info = await self.collection.find_one({"_id": user_id})
+        if activity == "theory":
+            return user_info["current_theory"]
+        elif activity == "test":
+            return user_info["current_test"]
+        elif activity == "practice":
+            return user_info["current_practice"]
+
     async def close(self):
         self.client.close()
 

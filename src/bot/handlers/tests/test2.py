@@ -21,12 +21,19 @@ router = Router()
 
 @router.callback_query(F.data == "test2")
 async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(Test2State.QUESTION1)
-    await callback_query.message.edit_text(
-        f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
-        "📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.",
-        reply_markup=start_test_keyboard(),
-    )
+    user_id = callback_query.from_user.id
+    current_test = int(await db.get_current_activity(user_id=user_id, activity="test"))
+    if current_test < 2:
+        await callback_query.message.edit_text("Вы ещё не прошли предыдущие тесты\n\n"
+                                               "Возвращайтесь, когда выполните всё до этого теста",
+                                               reply_markup=menu_keyboard())
+    else:
+        await state.set_state(Test2State.QUESTION1)
+        await callback_query.message.edit_text(
+            f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
+            "📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.",
+            reply_markup=start_test_keyboard(),
+        )
 
 
 @router.callback_query(F.data == "start_test", Test2State.QUESTION1)
