@@ -7,6 +7,7 @@ from src.bot.keyboards.user_keyboards import (menu_keyboard,
 from src.bot.states.theory_states import Theory1State
 from src.bot.utils.data_loader import get_theory_data
 from src.bot.utils.decorators import clear_last_keyboard
+from src.db.database import db
 
 THEORY_DATA = get_theory_data(1)
 THEORY_MESSAGES = THEORY_DATA.get("messages", {})
@@ -37,6 +38,7 @@ async def theory1_step2(callback: CallbackQuery, state: FSMContext):
 @clear_last_keyboard
 async def theory1_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
+    await db.update_current_activity(user_id=callback.from_user.id, current_theory=2)
     new_message = await callback.message.answer(
         "Урок завершен! Переходите к тесту или заданию", reply_markup=menu_keyboard()
     )
