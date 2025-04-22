@@ -24,7 +24,7 @@ async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     current_test = int(await db.get_current_activity(user_id=user_id, activity="test"))
     if current_test < 2:
-        await callback_query.message.edit_text("Вы ещё не прошли предыдущие тесты\n\n"
+        await callback_query.message.edit_text("❗️Вы ещё не прошли предыдущие тесты\n\n"
                                                "Возвращайтесь, когда выполните всё до этого теста",
                                                reply_markup=menu_keyboard())
     else:
@@ -38,6 +38,10 @@ async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "start_test", Test2State.QUESTION1)
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
+    user_id = callback_query.from_user.id
+    await db.start_test(user_id=user_id, test_number=2)
+    previous_results = await db.get_test_results(user_id=user_id, test_number=2)
+    await state.set_data(previous_results)
     question_data = QUESTIONS["question1"]
     text = format_question_text(question_data)
     await callback_query.message.edit_text(text, reply_markup=answer_keyboard())
@@ -47,13 +51,17 @@ async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer1(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question1"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Здесь можно добавить код для записи результата в базу данных.
     # Например, если результат правильный, записать True, иначе False.
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=1, is_correct=result)
+    if "1" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=1, is_correct=result)
+        results["1"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION2)
@@ -66,12 +74,16 @@ async def handle_test_answer1(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer2(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question2"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 2
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=2, is_correct=result)
+    if "2" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=2, is_correct=result)
+        results["1"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION3)
@@ -84,12 +96,16 @@ async def handle_test_answer2(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer3(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question3"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 3
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=3, is_correct=result)
+    if "3" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=3, is_correct=result)
+        results["3"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION4)
@@ -102,12 +118,16 @@ async def handle_test_answer3(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer4(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question4"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 4
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=4, is_correct=result)
+    if "4" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=4, is_correct=result)
+        results["4"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION5)
@@ -120,12 +140,16 @@ async def handle_test_answer4(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer5(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question5"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 5
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=5, is_correct=result)
+    if "5" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=5, is_correct=result)
+        results["5"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION6)
@@ -138,12 +162,16 @@ async def handle_test_answer5(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer6(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question6"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 6
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=6, is_correct=result)
+    if "6" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=6, is_correct=result)
+        results["6"] = result
+        await state.update_data(results)
 
     await callback_query.message.edit_text(summary_text)
     await state.set_state(Test2State.QUESTION7)
@@ -156,17 +184,21 @@ async def handle_test_answer6(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
+    results = await state.get_data()
     question_data = QUESTIONS["question7"]
     summary_text = format_question_summary(question_data, user_answer)
 
     # Запись результата для вопроса 7
-    result = 1 if user_answer == question_data["correct"] else 0
-    await db.tick_question_answer(user_id=user_id, test_number=2, question_number=7, is_correct=result)
+    if "7" not in results.keys():
+        result = 1 if user_answer == question_data["correct"] else 0
+        await db.tick_question_answer(user_id=user_id, test_number=2, question_number=7, is_correct=result)
+
     await db.set_test_mark(user_id=user_id, test_number=2)
     await db.update_current_activity(user_id=user_id, current_test=3)
 
     test_mark = await db.get_test_mark(user_id=user_id, test_number=2)
 
     await callback_query.message.edit_text(summary_text)
-    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\n Спасибо за участие!",
+    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\n"
+                                        f"Спасибо за участие!",
                                         reply_markup=menu_keyboard())
