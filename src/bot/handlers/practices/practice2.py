@@ -6,11 +6,11 @@ from aiogram.types import CallbackQuery, Message
 
 from src.bot.keyboards.user_keyboards import (menu_keyboard,
                                               start_practice_keyboard)
-from src.bot.states.practice_states import Practice1State
+from src.bot.states.practice_states import Practice2State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
 
-PRACTICE_DATA = get_practice_data(1)
+PRACTICE_DATA = get_practice_data(2)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
 TASKS = PRACTICE_DATA.get("tasks", {})
 
@@ -46,9 +46,9 @@ def check_task2(answer: str) -> str | None:
     return None
 
 
-@router.callback_query(F.data == "practice1")
+@router.callback_query(F.data == "practice2")
 async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(Practice1State.TASK1)
+    await state.set_state(Practice2State.TASK1)
     await callback_query.message.edit_text(
         f"Вы выбрали практику по теме: <b>{PRACTICE_NAME}</b>\n\n"
         "📝 Вы можете сделать задания, чтобы проверить свои знания или вернуться в главное меню.",
@@ -56,14 +56,14 @@ async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
     )
 
 
-@router.callback_query(F.data == "start_practice", Practice1State.TASK1)
+@router.callback_query(F.data == "start_practice", Practice2State.TASK1)
 async def send_practice_question1(callback_query: CallbackQuery, state: FSMContext):
     task_data = TASKS["task1"]
     text = task_data["task_text"]
     await callback_query.message.edit_text(text)
 
 
-@router.message(Practice1State.TASK1)
+@router.message(Practice2State.TASK1)
 async def handle_practice_answer1(message: Message, state: FSMContext):
     user_answer = message.text
     task_data = TASKS["task1"]
@@ -73,14 +73,14 @@ async def handle_practice_answer1(message: Message, state: FSMContext):
         await message.answer(format_task_feedback(task_data, error_key))
         return
 
-    await state.set_state(Practice1State.TASK2)
+    await state.set_state(Practice2State.TASK2)
 
     task2_data = TASKS["task2"]
     text2 = task2_data["task_text"]
     await message.answer(text2)
 
 
-@router.message(Practice1State.TASK2)
+@router.message(Practice2State.TASK2)
 async def handle_practice_answer2(message: Message, state: FSMContext):
     user_answer = message.text
     task_data = TASKS["task2"]

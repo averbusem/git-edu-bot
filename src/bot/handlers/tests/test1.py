@@ -22,18 +22,29 @@ router = Router()
 @router.callback_query(F.data == "test1")
 async def test1_selected(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(Test1State.QUESTION1)
-    await callback_query.message.edit_text(
-        f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
-        "📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n"
-        "❗ Помните, что оценка ставится по мере прохождения теста и исправить её уже нельзя!",
-        reply_markup=start_test_keyboard(),
-    )
+    user_id = callback_query.from_user.id
+    await db.start_test(user_id=user_id, test_number=1)
+    test_mark = await db.get_test_mark(user_id=user_id, test_number=1)
+    if test_mark is None:
+        await callback_query.message.edit_text(
+            f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
+            "📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n"
+            "❗ Помните, что оценка ставится по мере прохождения теста и исправить её уже нельзя!",
+            reply_markup=start_test_keyboard(),
+        )
+    else:
+        await callback_query.message.edit_text(
+            f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
+            f"📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n\n"
+            f"❗ Вы уже проходили этот тест до конца\n"
+            f"Ваша оценка <b>{test_mark}</b>",
+            reply_markup=start_test_keyboard(),
+        )
 
 
 @router.callback_query(F.data == "start_test", Test1State.QUESTION1)
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
-    await db.start_test(user_id=user_id, test_number=1)
     previous_results = await db.get_test_results(user_id=user_id, test_number=1)
     await state.set_data(previous_results)
     question_data = QUESTIONS["question1"]

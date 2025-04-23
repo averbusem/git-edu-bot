@@ -13,7 +13,7 @@ class Database:
         self.results = self.db[results_collection_name]
 
     async def add_new_user(self, user_id: int, current_theory: int = 1, current_test: int = 1,
-                           current_practice: int = 1):
+                           current_practice: int = 2):
         user = await self.users.find_one({"_id": user_id})
         if user is None:
             new_user = {
@@ -69,7 +69,7 @@ class Database:
         answers = test_info.get('answers', {})
         total = len(answers)
         correct_count = sum(1 for v in answers.values() if v)
-        score = round((correct_count / 7) * 100, 2) if total else 0.0
+        score = round((correct_count / total) * 100, 2) if total else 0.0
 
         return await self.results.update_one({"user_id": user_id, "test_number": test_number},
                                              {"$set": {"score": score}})
@@ -77,19 +77,17 @@ class Database:
     async def get_test_mark(self, user_id: int, test_number: int):
         test_info = await self.results.find_one({"user_id": user_id, "test_number": test_number})
         test_result = test_info.get('score')
-        return test_result if test_result else None
+        return test_result
 
-    async def get_current_activity(self, user_id: int, activity: str):
+    async def get_current_activity(self, user_id: int):
         user_info = await self.users.find_one({"_id": user_id})
         if not user_info:
             return None
 
-        if activity == "theory":
-            return user_info["current_theory"]
-        elif activity == "test":
-            return user_info["current_test"]
-        elif activity == "practice":
-            return user_info["current_practice"]
+        activities = {"theory": user_info["current_theory"],
+                      "test": user_info["current_test"],
+                      "practice": user_info["current_practice"]}
+        return activities
 
     async def close(self):
         self.client.close()

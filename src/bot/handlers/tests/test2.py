@@ -8,7 +8,7 @@ from src.bot.states.test_states import Test2State
 from src.bot.utils.data_loader import get_test_data
 from src.bot.utils.test_formatter import (format_question_summary,
                                           format_question_text)
-from src.bot.utils.test_steps import process_test_answer
+from src.bot.utils.test_steps import pre_test_state, process_test_answer
 from src.db.database import db
 
 OPTIONS = ["A", "B", "C", "D"]
@@ -23,25 +23,13 @@ router = Router()
 @router.callback_query(F.data == "test2")
 async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
-    current_test = int(await db.get_current_activity(user_id=user_id, activity="test"))
-    if current_test < 2:
-        await callback_query.message.edit_text("❗️Вы ещё не прошли предыдущие тесты\n\n"
-                                               "Возвращайтесь, когда выполните всё до этого теста",
-                                               reply_markup=menu_keyboard())
-    else:
-        await state.set_state(Test2State.QUESTION1)
-        await callback_query.message.edit_text(
-            f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
-            "📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n"
-            "❗ Помните, что оценка ставится по мере прохождения теста и исправить её уже нельзя!",
-            reply_markup=start_test_keyboard(),
-        )
+    await pre_test_state(callback_query, state, user_id,
+                         test_number=2, cur_activity_num=2, test_state=Test2State(), test_name=TEST_NAME)
 
 
 @router.callback_query(F.data == "start_test", Test2State.QUESTION1)
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
-    await db.start_test(user_id=user_id, test_number=2)
     previous_results = await db.get_test_results(user_id=user_id, test_number=2)
     await state.set_data(previous_results)
     question_data = QUESTIONS["question1"]

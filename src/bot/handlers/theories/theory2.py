@@ -20,10 +20,13 @@ router = Router()
 @clear_last_keyboard
 async def start_theory2(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
-    current_theory = int(await db.get_current_activity(user_id=user_id, activity="theory"))
-    if current_theory < 2:
-        await callback.message.edit_text("Вы ещё не прошли предыдущие уроки\n\n"
-                                         "Возвращайтесь, когда изучите всё до этого урока",
+    current_activity = await db.get_current_activity(user_id=user_id)
+    cur_test = current_activity["test"]
+    cur_theory = current_activity["theory"]
+    cur_practice = current_activity["practice"]
+    if any([cur_theory < 2, cur_test < 2, cur_practice < 2]):
+        await callback.message.edit_text("❗Вы ещё не прошли предыдущий урок\n\n"
+                                         "Возвращайтесь, когда изучите всё в предыдущих уроках",
                                          reply_markup=menu_keyboard())
     else:
         await state.set_state(Theory2State.MESSAGE2)

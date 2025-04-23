@@ -100,8 +100,7 @@ def start_test_keyboard():
 def practice_list_keyboard():
     keyboard = InlineKeyboardBuilder()
     practices = [
-        ("Практика 1", "practice1"),
-        ("Практика 2", "practice2"),
+        ("Практика 2. Установка и настройка Git", "practice2"),
         ("Практика 3", "practice3"),
         ("Практика 4", "practice4"),
         ("Практика 5", "practice5"),
