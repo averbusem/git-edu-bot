@@ -5,7 +5,7 @@ from src.bot.handlers.theories import theories_list
 
 def get_handlers_router() -> Router:
     from src.bot.handlers import commands, menu, practice_choice, progress
-    from src.bot.handlers.tasks import get_practice_router
+    from src.bot.handlers.practices import get_practice_router
     from src.bot.handlers.tests import get_tests_router
     from src.bot.handlers.theories import get_theory_router
 

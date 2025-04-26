@@ -1,0 +1,11 @@
+services:
+  mongo:
+    container_name: mongoGitEdu
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/src/db
+
+volumes:
+  mongo_data:

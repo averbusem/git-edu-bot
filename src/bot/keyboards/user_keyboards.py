@@ -95,3 +95,32 @@ def start_test_keyboard():
     keyboard.button(text="Пройти тест", callback_data="start_test")
     keyboard.button(text="Главное меню", callback_data="main_menu")
     return keyboard.as_markup()
+
+
+def practice_list_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    practices = [
+        ("Практика 2. Установка и настройка Git", "practice2"),
+        ("Практика 3", "practice3"),
+        ("Практика 4", "practice4"),
+        ("Практика 5", "practice5"),
+        ("Практика 6", "practice6"),
+        ("Практика 7", "practice7"),
+        ("Практика 8", "practice8"),
+        ("Практика 9", "practice9"),
+    ]
+
+    for title, callback_data in practices:
+        keyboard.add(InlineKeyboardButton(text=title, callback_data=callback_data))
+
+    keyboard.add(InlineKeyboardButton(text="Главное меню", callback_data="main_menu"))
+
+    keyboard.adjust(1)
+    return keyboard.as_markup()
+
+
+def start_practice_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text="Пройти практику", callback_data="start_practice")
+    keyboard.button(text="Главное меню", callback_data="main_menu")
+    return keyboard.as_markup()
