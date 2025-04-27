@@ -9,6 +9,7 @@ from src.bot.keyboards.user_keyboards import (menu_keyboard,
 from src.bot.states.practice_states import Practice2State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
+from src.db.database import db
 
 PRACTICE_DATA = get_practice_data(2)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
@@ -91,5 +92,6 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
         return
 
     await state.clear()
+    await db.update_current_activity(user_id=message.from_user.id, current_practice=3)
     await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
                          reply_markup=menu_keyboard())

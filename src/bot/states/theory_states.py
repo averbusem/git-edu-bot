@@ -10,3 +10,8 @@ class Theory1State(StatesGroup):
 class Theory2State(StatesGroup):
     MESSAGE2 = State()
     MESSAGE3 = State()
+
+class Theory3State(StatesGroup):
+    MESSAGE2 = State()
+    MESSAGE3 = State()
+    MESSAGE4 = State()
