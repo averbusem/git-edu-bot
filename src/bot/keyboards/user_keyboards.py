@@ -101,7 +101,7 @@ def practice_list_keyboard():
     keyboard = InlineKeyboardBuilder()
     practices = [
         ("Практика 2. Установка и настройка Git", "practice2"),
-        ("Практика 3", "practice3"),
+        ("Практика 3. Создание репозитория и первые коммиты", "practice3"),
         ("Практика 4", "practice4"),
         ("Практика 5", "practice5"),
         ("Практика 6", "practice6"),
