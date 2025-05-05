@@ -13,17 +13,22 @@ async def process_test_answer(callback_query: CallbackQuery, state: FSMContext, 
                               next_state=None, next_question_key: str = None):
     user_answer = callback_query.data
     user_id = callback_query.from_user.id
-    results = await state.get_data()
+    state_data = await state.get_data()
+    prev_results = state_data['prev_results']
+    cur_results = state_data['cur_marks']
     question_data = questions[question_key]
     summary_text = format_question_summary(question_data, user_answer)
+    is_correct = 1 if user_answer == question_data["correct"] else 0
 
     key = str(question_number)
-    if key not in results:
-        is_correct = 1 if user_answer == question_data["correct"] else 0
+    if key not in prev_results:
         await db.tick_question_answer(user_id=user_id, test_number=test_number, question_number=question_number,
                                       is_correct=is_correct)
-        results[key] = is_correct
-        await state.update_data(results)
+        prev_results[key] = is_correct
+        await state.update_data(prev_results=prev_results)
+
+    cur_results[key] = is_correct
+    await state.update_data(cur_marks=cur_results)
 
     await callback_query.message.edit_text(summary_text)
     if next_state and next_question_key:
@@ -60,6 +65,6 @@ async def pre_test_state(callback_query: CallbackQuery, state: FSMContext, user_
                 f"Вы выбрали тест по теме: <b>{test_name}</b>\n\n"
                 f"📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n\n"
                 f"❗ Вы уже проходили этот тест до конца\n"
-                f"Ваша оценка <b>{test_mark}</b>",
+                f"Ваша оценка <b>{test_mark}%</b>",
                 reply_markup=start_test_keyboard(),
             )

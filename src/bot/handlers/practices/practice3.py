@@ -1,5 +1,3 @@
-import re
-
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
@@ -9,6 +7,7 @@ from src.bot.keyboards.user_keyboards import (menu_keyboard,
 from src.bot.states.practice_states import Practice3State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
+from src.bot.utils.practice_steps import pre_practice_state
 from src.db.database import db
 
 PRACTICE_DATA = get_practice_data(3)
@@ -53,7 +52,7 @@ def check_task3(answer: str) -> str | None:
     head_line = next((line for line in answer.splitlines() if "HEAD -> " in line), None)
     if head_line and head_line.endswith("Add hello.txt"):
         return None
-    elif head_line and not(head_line.endswith("Add hello.txt")):
+    elif head_line and not (head_line.endswith("Add hello.txt")):
         return "commit_name_error"
     elif "fatal: not a git repository" in answer.lower():
         return "not_rep"
@@ -74,10 +73,10 @@ def check_task4(answer: str) -> str | None:
     if len(answer.splitlines()) != 2:
         return "one_commit"
     head_line = answer.splitlines()[0]
-    sec_line =  answer.splitlines()[1]
+    sec_line = answer.splitlines()[1]
     if head_line.endswith("Update hello.txt") and sec_line.endswith("Add hello.txt"):
         return None
-    elif not(head_line.endswith("Update hello.txt") and sec_line.endswith("Add hello.txt")):
+    elif not (head_line.endswith("Update hello.txt") and sec_line.endswith("Add hello.txt")):
         return "commit_name_error"
     elif "fatal: not a git repository" in answer.lower():
         return "not_rep"
@@ -94,16 +93,14 @@ def check_task4(answer: str) -> str | None:
 
 @router.callback_query(F.data == "practice3")
 async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(Practice3State.TASK1)
-    await callback_query.message.edit_text(
-        f"Вы выбрали практику по теме: <b>{PRACTICE_NAME}</b>\n\n"
-        "📝 Вы можете сделать задания, чтобы проверить свои знания или вернуться в главное меню.",
-        reply_markup=start_practice_keyboard(),
-    )
+    user_id = callback_query.from_user.id
+    await pre_practice_state(callback_query=callback_query, state=state, user_id=user_id, cur_activity_num=3,
+                             practice_state=Practice3State(), practice_name=PRACTICE_NAME)
 
 
-@router.callback_query(F.data == "start_practice", Practice3State.TASK1)
+@router.callback_query(F.data == "start_practice", Practice3State.START)
 async def send_practice_question1(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(Practice3State.TASK1)
     task_data = TASKS["task1"]
     text = task_data["task_text"]
     await callback_query.message.edit_text(text)
@@ -125,6 +122,7 @@ async def handle_practice_answer1(message: Message, state: FSMContext):
     text2 = task2_data["task_text"]
     await message.answer(text2)
 
+
 @router.message(Practice3State.TASK2)
 async def handle_practice_answer2(message: Message, state: FSMContext):
     user_answer = message.text
@@ -141,6 +139,7 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
     text3 = task3_data["task_text"]
     await message.answer(text3)
 
+
 @router.message(Practice3State.TASK3)
 async def handle_practice_answer3(message: Message, state: FSMContext):
     user_answer = message.text
@@ -156,6 +155,7 @@ async def handle_practice_answer3(message: Message, state: FSMContext):
     task4_data = TASKS["task4"]
     text4 = task4_data["task_text"]
     await message.answer(text4)
+
 
 @router.message(Practice3State.TASK4)
 async def handle_practice_answer4(message: Message, state: FSMContext):

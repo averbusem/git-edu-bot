@@ -2,12 +2,10 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.keyboards.user_keyboards import (answer_keyboard, menu_keyboard,
-                                              start_test_keyboard)
+from src.bot.keyboards.user_keyboards import answer_keyboard, menu_keyboard
 from src.bot.states.test_states import Test2State
 from src.bot.utils.data_loader import get_test_data
-from src.bot.utils.test_formatter import (format_question_summary,
-                                          format_question_text)
+from src.bot.utils.test_formatter import format_question_text
 from src.bot.utils.test_steps import pre_test_state, process_test_answer
 from src.db.database import db
 
@@ -31,7 +29,9 @@ async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     previous_results = await db.get_test_results(user_id=user_id, test_number=2)
-    await state.set_data(previous_results)
+    marks_cur_test = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0}
+    await state.update_data(cur_marks=marks_cur_test)
+    await state.update_data(prev_results=previous_results)
     question_data = QUESTIONS["question1"]
     text = format_question_text(question_data)
     await callback_query.message.edit_text(text, reply_markup=answer_keyboard())
@@ -129,6 +129,11 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await db.set_test_mark(user_id=user_id, test_number=2)
     await db.update_current_activity(user_id=user_id, current_test=3)
 
-    test_mark = await db.get_test_mark(user_id=user_id, test_number=2)
-    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\nСпасибо за участие!",
+    state_data = await state.get_data()
+    cur_results = state_data["cur_marks"]
+    answers = cur_results
+    total = len(answers)
+    correct_count = sum(1 for v in answers.values() if v)
+    score = round((correct_count / total) * 100, 2) if total else 0.0
+    await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за участие!",
                                         reply_markup=menu_keyboard())

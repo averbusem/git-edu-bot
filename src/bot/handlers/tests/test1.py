@@ -37,7 +37,7 @@ async def test1_selected(callback_query: CallbackQuery, state: FSMContext):
             f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
             f"📝 Вы можете пройти тест, чтобы проверить свои знания или вернуться в главное меню.\n\n"
             f"❗ Вы уже проходили этот тест до конца\n"
-            f"Ваша оценка <b>{test_mark}</b>",
+            f"Ваша оценка <b>{test_mark}%</b>",
             reply_markup=start_test_keyboard(),
         )
 
@@ -46,7 +46,9 @@ async def test1_selected(callback_query: CallbackQuery, state: FSMContext):
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
     previous_results = await db.get_test_results(user_id=user_id, test_number=1)
-    await state.set_data(previous_results)
+    marks_cur_test = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0}
+    await state.update_data(cur_marks=marks_cur_test)
+    await state.update_data(prev_results=previous_results)
     question_data = QUESTIONS["question1"]
     text = format_question_text(question_data)
     await callback_query.message.edit_text(text, reply_markup=answer_keyboard())
@@ -144,6 +146,11 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await db.set_test_mark(user_id=user_id, test_number=1)
     await db.update_current_activity(user_id=user_id, current_test=2)
 
-    test_mark = await db.get_test_mark(user_id=user_id, test_number=1)
-    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\nСпасибо за участие!",
+    state_data = await state.get_data()
+    cur_results = state_data["cur_marks"]
+    answers = cur_results
+    total = len(answers)
+    correct_count = sum(1 for v in answers.values() if v)
+    score = round((correct_count / total) * 100, 2) if total else 0.0
+    await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за участие!",
                                         reply_markup=menu_keyboard())
