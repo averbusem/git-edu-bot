@@ -2,12 +2,12 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.keyboards.user_keyboards import (answer_keyboard, menu_keyboard,
-                                              start_test_keyboard)
+from src.bot.handlers import settings
+from src.bot.handlers.keyboards.user_keyboards import (answer_keyboard,
+                                                       menu_keyboard)
 from src.bot.states.test_states import Test2State
 from src.bot.utils.data_loader import get_test_data
-from src.bot.utils.test_formatter import (format_question_summary,
-                                          format_question_text)
+from src.bot.utils.test_formatter import format_question_text
 from src.bot.utils.test_steps import pre_test_state, process_test_answer
 from src.db.database import db
 
@@ -130,5 +130,7 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await db.update_current_activity(user_id=user_id, current_test=3)
 
     test_mark = await db.get_test_mark(user_id=user_id, test_number=2)
-    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\nСпасибо за участие!",
+    points = round(test_mark / 100 * settings.TEST_POINTS)
+    # await db.update_points(user_id=user_id, points=points)
+    await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\nВы получили {points} опыта.\n\nСпасибо за участие!",
                                         reply_markup=menu_keyboard())

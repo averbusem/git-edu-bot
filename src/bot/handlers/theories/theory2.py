@@ -2,8 +2,9 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.keyboards.user_keyboards import (menu_keyboard,
-                                              next_massage_keyboard)
+from src.bot.handlers import settings
+from src.bot.handlers.keyboards.user_keyboards import (menu_keyboard,
+                                                       next_massage_keyboard)
 from src.bot.states.theory_states import Theory2State
 from src.bot.utils.data_loader import get_theory_data
 from src.bot.utils.decorators import clear_last_keyboard
@@ -51,7 +52,8 @@ async def theory2_step2(callback: CallbackQuery, state: FSMContext):
 async def theory2_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
     await db.update_current_activity(user_id=callback.from_user.id, current_theory=3)
+    # await db.update_points(user_id=callback.from_user.id, points=settings.THEORY_POINTS)
     new_message = await callback.message.answer(
-        "Урок завершен! Переходите к тесту или заданию", reply_markup=menu_keyboard()
+        f"Урок завершен! Вы получили {settings.THEORY_POINTS} опыта.\n\nПереходите к тесту или заданию.", reply_markup=menu_keyboard()
     )
     return new_message

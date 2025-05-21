@@ -13,7 +13,7 @@ class Database:
         self.results = self.db[results_collection_name]
 
     async def add_new_user(self, user_id: int, current_theory: int = 1, current_test: int = 1,
-                           current_practice: int = 2):
+                           current_practice: int = 2, day_points: int = 0, all_points: int = 0):
         user = await self.users.find_one({"_id": user_id})
         if user is None:
             new_user = {
@@ -21,6 +21,8 @@ class Database:
                 "current_theory": current_theory,
                 "current_test": current_test,
                 "current_practice": current_practice,
+                "day_points": day_points,
+                "all_points": all_points,
                 # средняя оценка за все тесты (считается после прохождения всех тестов)
                 "average_score": 0.0
             }

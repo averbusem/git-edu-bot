@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from src.bot.keyboards.user_keyboards import start_keyboard
+from src.bot.handlers.keyboards.user_keyboards import start_keyboard
 from src.db.database import db
 
 router = Router()
