@@ -110,6 +110,24 @@ class Database:
                       "practice": user_info["current_practice"]}
         return activities
 
+    async def get_user_statistics(self, user_id: int):
+        try:
+            user_info = await self.users.find_one({"_id": user_id})
+            if user_info:
+                return {
+                    "current_theory": user_info.get("current_theory", 0),
+                    "current_test": user_info.get("current_test", 0),
+                    "current_practice": user_info.get("current_practice", 0),
+
+                    "all_points": user_info.get("all_points", 0),
+                    "day_points": user_info.get("day_points", 0)
+                }
+            else:
+                return None  # Если пользователь не найден, возвращаем None
+        except Exception as e:
+            print(f"An error occurred while fetching user statistics: {e}")
+            return None  # В случае ошибки возвращаем None
+
     async def close(self):
         self.client.close()
 
