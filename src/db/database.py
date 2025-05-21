@@ -28,6 +28,25 @@ class Database:
             }
             return await self.users.insert_one(new_user)
 
+    async def update_points(self, user_id: int, points: int):
+        try:
+            update_result = await self.users.update_one(
+                {"_id": user_id},
+                {"$inc": {"day_points": points, "all_points": points}}
+            )
+
+            if update_result.modified_count == 0:
+                print(f"User with ID {user_id} not found or no changes were made.")
+            else:
+                updated_user = await self.users.find_one({"_id": user_id})
+                all_points = updated_user.get("all_points", 0)
+                day_points = updated_user.get("day_points", 0)
+                print(
+                    f"Successfully updated points for user {user_id}. All points: {all_points}. Day points: {day_points}.")
+
+        except Exception as e:
+            print(f"An error occurred while updating points: {e}")
+
     async def update_current_activity(self, user_id: int, current_theory: int = None, current_test: int = None,
                                       current_practice: int = None):
         user_info = await self.users.find_one({"_id": user_id})

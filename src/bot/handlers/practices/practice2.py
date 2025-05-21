@@ -93,6 +93,6 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
         return
 
     await state.clear()
-    # await db.update_points(user_id=message.from_user.id, points=settings.PRACTICE_POINTS)
+    await db.update_points(user_id=message.from_user.id, points=settings.PRACTICE_POINTS)
     await message.answer(f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\n Вы получили {settings.PRACTICE_POINTS} опыта.",
                          reply_markup=menu_keyboard())

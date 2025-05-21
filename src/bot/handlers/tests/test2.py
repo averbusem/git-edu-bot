@@ -131,6 +131,6 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
 
     test_mark = await db.get_test_mark(user_id=user_id, test_number=2)
     points = round(test_mark / 100 * settings.TEST_POINTS)
-    # await db.update_points(user_id=user_id, points=points)
+    await db.update_points(user_id=user_id, points=points)
     await callback_query.message.answer(f"Тест завершён. Ваша оценка за тест {test_mark}\n\nВы получили {points} опыта.\n\nСпасибо за участие!",
                                         reply_markup=menu_keyboard())
