@@ -124,3 +124,12 @@ def start_practice_keyboard():
     keyboard.button(text="Пройти практику", callback_data="start_practice")
     keyboard.button(text="Главное меню", callback_data="main_menu")
     return keyboard.as_markup()
+
+
+def progress_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(text="Рейтинг", callback_data="rating"),
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+    )
+    return keyboard.as_markup()

@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
 from src.bot.handlers import settings
-from src.bot.handlers.keyboards.user_keyboards import menu_keyboard
+from src.bot.handlers.keyboards.user_keyboards import progress_keyboard
 from src.db.database import db
 
 router = Router()
@@ -33,4 +33,4 @@ async def learn_button(callback_query: CallbackQuery):
     else:
         progress_message = "Не удалось получить информацию о прогрессе."
 
-    await callback_query.message.edit_text(progress_message, reply_markup=menu_keyboard())
+    await callback_query.message.edit_text(progress_message, reply_markup=progress_keyboard())

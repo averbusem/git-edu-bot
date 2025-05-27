@@ -12,12 +12,13 @@ class Database:
         self.users = self.db[users_collection_name]
         self.results = self.db[results_collection_name]
 
-    async def add_new_user(self, user_id: int, current_theory: int = 1, current_test: int = 1,
+    async def add_new_user(self, user_id: int, username: str, current_theory: int = 1, current_test: int = 1,
                            current_practice: int = 2, day_points: int = 0, all_points: int = 0):
         user = await self.users.find_one({"_id": user_id})
         if user is None:
             new_user = {
                 "_id": user_id,
+                "username": username,
                 "current_theory": current_theory,
                 "current_test": current_test,
                 "current_practice": current_practice,
@@ -30,20 +31,10 @@ class Database:
 
     async def update_points(self, user_id: int, points: int):
         try:
-            update_result = await self.users.update_one(
+            await self.users.update_one(
                 {"_id": user_id},
                 {"$inc": {"day_points": points, "all_points": points}}
             )
-
-            if update_result.modified_count == 0:
-                print(f"User with ID {user_id} not found or no changes were made.")
-            else:
-                updated_user = await self.users.find_one({"_id": user_id})
-                all_points = updated_user.get("all_points", 0)
-                day_points = updated_user.get("day_points", 0)
-                print(
-                    f"Successfully updated points for user {user_id}. All points: {all_points}. Day points: {day_points}.")
-
         except Exception as e:
             print(f"An error occurred while updating points: {e}")
 
@@ -123,10 +114,21 @@ class Database:
                     "day_points": user_info.get("day_points", 0)
                 }
             else:
-                return None  # Если пользователь не найден, возвращаем None
+                return None
+
         except Exception as e:
             print(f"An error occurred while fetching user statistics: {e}")
-            return None  # В случае ошибки возвращаем None
+            return None
+
+    async def get_all_users(self):
+        try:
+            # Получаем всех пользователей из коллекции
+            users_cursor = self.users.find({})
+            # length=None для получения всех пользователей
+            users_list = await users_cursor.to_list(length=None)
+            return users_list
+        except Exception as e:
+            print(f"An error occurred while fetching all users: {e}")
 
     async def close(self):
         self.client.close()
