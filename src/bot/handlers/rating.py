@@ -49,7 +49,11 @@ async def rating_button(callback_query: CallbackQuery):
     ranking_message = "Рейтинг:\n\n"
     for index in range(start_index, end_index):
         user = sorted_users[index]
-        ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
+        if index == user_index:
+            ranking_message += f"{index +
+                                  1}.  <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+        else:
+            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
 
     # Добавляем кнопки для прокрутки
     # Используем функцию для создания клавиатуры
@@ -60,6 +64,7 @@ async def rating_button(callback_query: CallbackQuery):
 @router.callback_query(lambda c: c.data and c.data.startswith("rating_page:"))
 async def change_page(callback_query: CallbackQuery):
     start_index = int(callback_query.data.split(":")[1])
+    user_id = callback_query.from_user.id
 
     sorted_users = await get_user_rankings()
     total_users = len(sorted_users)
@@ -69,7 +74,11 @@ async def change_page(callback_query: CallbackQuery):
     ranking_message = "Рейтинг:\n\n"
     for index in range(start_index, end_index):
         user = sorted_users[index]
-        ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
+        if user['_id'] == user_id:
+            ranking_message += f"{index +
+                                  1}. <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+        else:
+            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
 
     keyboard = rating_keyboard(start_index, total_users)
     await callback_query.message.edit_text(ranking_message, reply_markup=keyboard)

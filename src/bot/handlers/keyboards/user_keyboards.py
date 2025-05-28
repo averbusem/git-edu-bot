@@ -1,6 +1,8 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from src.bot.handlers import settings
+
 
 def start_keyboard():
     # Начальная клавиатура с основными кнопками
@@ -149,5 +151,16 @@ def rating_keyboard(start_index: int, total_users: int):
     if start_index + 3 < total_users:
         next_index = start_index + 3
         keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"rating_page:{next_index}"))
+
+    return keyboard.as_markup()
+
+
+def shop_keyboard(photo_number: int):
+    keyboard = InlineKeyboardBuilder()
+
+    if photo_number > 1:
+        keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
+    if photo_number < settings.TOTAL_PHOTOS:
+        keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"next_{photo_number + 1}"))
 
     return keyboard.as_markup()

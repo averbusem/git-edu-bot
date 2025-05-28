@@ -5,7 +5,7 @@ from src.bot.handlers.theories import theories_list
 
 def get_handlers_router() -> Router:
     from src.bot.handlers import (commands, menu, practice_choice, progress,
-                                  rating)
+                                  rating, shop)
     from src.bot.handlers.practices import get_practice_router
     from src.bot.handlers.tests import get_tests_router
     from src.bot.handlers.theories import get_theory_router
@@ -15,6 +15,7 @@ def get_handlers_router() -> Router:
     router.include_router(menu.router)
     router.include_router(progress.router)
     router.include_router(rating.router)
+    router.include_router(shop.router)
     router.include_router(practice_choice.router)
     router.include_router(get_practice_router())
     router.include_router(get_theory_router())
