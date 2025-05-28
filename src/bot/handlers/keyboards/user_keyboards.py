@@ -133,3 +133,21 @@ def progress_keyboard():
         InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
     )
     return keyboard.as_markup()
+
+
+def rating_keyboard(start_index: int, total_users: int):
+    keyboard = InlineKeyboardBuilder()
+
+    # Кнопка назад (если не первая страница)
+    if start_index > 0:
+        prev_index = max(0, start_index - 3)
+        keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"rating_page:{prev_index}"))
+
+    keyboard.add(InlineKeyboardButton(text="Главное меню", callback_data="main_menu"))
+
+    # Кнопка вперед (если есть следующие)
+    if start_index + 3 < total_users:
+        next_index = start_index + 3
+        keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"rating_page:{next_index}"))
+
+    return keyboard.as_markup()
