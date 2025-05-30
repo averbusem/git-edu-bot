@@ -160,7 +160,8 @@ def shop_keyboard(photo_number: int):
 
     if photo_number > 1:
         keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
-    if photo_number < settings.TOTAL_PHOTOS:
+    keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
+    if photo_number < settings.TOTAL_STICKERS:
         keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"next_{photo_number + 1}"))
 
     return keyboard.as_markup()

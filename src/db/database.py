@@ -122,13 +122,22 @@ class Database:
 
     async def get_all_users(self):
         try:
-            # Получаем всех пользователей из коллекции
             users_cursor = self.users.find({})
-            # length=None для получения всех пользователей
             users_list = await users_cursor.to_list(length=None)
             return users_list
         except Exception as e:
             print(f"An error occurred while fetching all users: {e}")
+
+    async def try_spend_points(self, user_id: int, price: int) -> bool:
+        result = await self.users.update_one(
+            {"_id": user_id, "all_points": {"$gte": price}},
+            {"$inc": {"all_points": -price}}
+        )
+        return result.modified_count == 1
+
+    async def get_all_points(self, user_id: int) -> int:
+        user = await self.users.find_one({"_id": user_id})
+        return user.get("all_points", 0)
 
     async def close(self):
         self.client.close()

@@ -1,5 +1,4 @@
 from aiogram import F, Router
-from aiogram.filters import Command
 from aiogram.types import CallbackQuery
 
 from src.bot.handlers.keyboards.user_keyboards import (menu_keyboard,
@@ -55,8 +54,6 @@ async def rating_button(callback_query: CallbackQuery):
         else:
             ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
 
-    # Добавляем кнопки для прокрутки
-    # Используем функцию для создания клавиатуры
     keyboard = rating_keyboard(start_index, total_users)
     await callback_query.message.edit_text(ranking_message, reply_markup=keyboard)
 

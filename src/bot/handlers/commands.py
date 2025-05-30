@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile, Message
 
+from src.bot.handlers import settings
 from src.bot.handlers.keyboards.user_keyboards import (shop_keyboard,
                                                        start_keyboard)
 from src.db.database import db
@@ -22,10 +23,12 @@ async def start_command(message: Message, state: FSMContext):
 @router.message(Command("shop"))
 async def shop_command(message: Message):
     user_name = message.from_user.first_name
-    await message.answer(
-        f"{user_name}, вперед за покупками!\n\nЗдесь Вы можете приобрести забавные стикеры за полученный опыт. По стрелкам можно посмотреть все товары.")
+    user_id = message.from_user.id
+    all_points = await db.get_all_points(user_id)
 
-    photo_path = "C:/Users/lenas/git-edu/data/shop/1.jpg"
+    await message.answer(f"{user_name}, вперед за покупками!")
+
+    photo_path = "../data/shop/1.jpg"
     photo = FSInputFile(photo_path)
 
-    await message.answer_photo(photo=photo, reply_markup=shop_keyboard(1))
+    await message.answer_photo(photo=photo, reply_markup=shop_keyboard(1), caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас - {all_points}🔆")
