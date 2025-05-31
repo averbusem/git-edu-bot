@@ -12,12 +12,12 @@ class Database:
         self.users = self.db[users_collection_name]
         self.results = self.db[results_collection_name]
 
-    async def add_new_user(self, user_id: int, current_theory: int = 1, current_test: int = 1,
+    async def add_new_user(self, user_id: str, current_theory: int = 1, current_test: int = 1,
                            current_practice: int = 2):
-        user = await self.users.find_one({"_id": user_id})
+        user = await self.users.find_one({"_id": f'{user_id}'})
         if user is None:
             new_user = {
-                "_id": user_id,
+                "_id": f'{user_id}',
                 "current_theory": current_theory,
                 "current_test": current_test,
                 "current_practice": current_practice,
@@ -26,9 +26,9 @@ class Database:
             }
             return await self.users.insert_one(new_user)
 
-    async def update_current_activity(self, user_id: int, current_theory: int = None, current_test: int = None,
+    async def update_current_activity(self, user_id: str, current_theory: int = None, current_test: int = None,
                                       current_practice: int = None):
-        user_info = await self.users.find_one({"_id": user_id})
+        user_info = await self.users.find_one({"_id": f'{user_id}'})
         if current_theory:
             if current_theory >= user_info["current_theory"]:
                 user_info["current_theory"] = current_theory
@@ -40,47 +40,47 @@ class Database:
                 user_info["current_practice"] = current_practice
 
         if user_info:
-            return self.users.update_one({"_id": user_id}, {"$set": user_info})
+            return self.users.update_one({"_id": f'{user_id}'}, {"$set": user_info})
 
-    async def start_test(self, user_id: int, test_number: int):
-        exists = await self.results.find_one({"user_id": user_id, "test_number": test_number})
+    async def start_test(self, user_id: str, test_number: int):
+        exists = await self.results.find_one({"user_id": f'{user_id}', "test_number": test_number})
         if exists is None:
             test_doc = {
-                "user_id": user_id,
+                "user_id": f'{user_id}',
                 "test_number": test_number,
                 "answers": {},
                 "score": None
             }
             return await self.results.insert_one(test_doc)
 
-    async def get_test_results(self, user_id: int, test_number: int):
-        test_info = await self.results.find_one({"user_id": user_id, "test_number": test_number})
+    async def get_test_results(self, user_id: str, test_number: int):
+        test_info = await self.results.find_one({"user_id": f'{user_id}', "test_number": test_number})
         return test_info["answers"]
 
-    async def tick_question_answer(self, user_id: int, test_number: int,
+    async def tick_question_answer(self, user_id: str, test_number: int,
                                    question_number: int, is_correct: int):
         key = f"answers.{question_number}"
         update_op = {"$set": {key: is_correct}}
 
-        return await self.results.update_one({"user_id": user_id, "test_number": test_number}, update_op)
+        return await self.results.update_one({"user_id": f'{user_id}', "test_number": test_number}, update_op)
 
-    async def set_test_mark(self, user_id: int, test_number: int):
-        test_info = await self.results.find_one({"user_id": user_id, "test_number": test_number})
+    async def set_test_mark(self, user_id: str, test_number: int):
+        test_info = await self.results.find_one({"user_id": f'{user_id}', "test_number": test_number})
         answers = test_info.get('answers', {})
         total = len(answers)
         correct_count = sum(1 for v in answers.values() if v)
         score = round((correct_count / total) * 100, 2) if total else 0.0
 
-        return await self.results.update_one({"user_id": user_id, "test_number": test_number},
+        return await self.results.update_one({"user_id": f'{user_id}', "test_number": test_number},
                                              {"$set": {"score": score}})
 
-    async def get_test_mark(self, user_id: int, test_number: int):
-        test_info = await self.results.find_one({"user_id": user_id, "test_number": test_number})
+    async def get_test_mark(self, user_id: str, test_number: int):
+        test_info = await self.results.find_one({"user_id": f'{user_id}', "test_number": test_number})
         test_result = test_info.get('score')
         return test_result
 
-    async def get_current_activity(self, user_id: int):
-        user_info = await self.users.find_one({"_id": user_id})
+    async def get_current_activity(self, user_id: str):
+        user_info = await self.users.find_one({"_id": f'{user_id}'})
         if not user_info:
             return None
 

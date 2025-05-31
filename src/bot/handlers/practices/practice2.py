@@ -4,11 +4,12 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from src.bot.keyboards.user_keyboards import (menu_keyboard,
-                                              start_practice_keyboard)
+from src.bot.keyboards.user_keyboards import menu_keyboard
 from src.bot.states.practice_states import Practice2State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
+from src.bot.utils.practice_steps import pre_practice_state
+from src.db.database import db
 
 PRACTICE_DATA = get_practice_data(2)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
@@ -48,16 +49,14 @@ def check_task2(answer: str) -> str | None:
 
 @router.callback_query(F.data == "practice2")
 async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
-    await state.set_state(Practice2State.TASK1)
-    await callback_query.message.edit_text(
-        f"Вы выбрали практику по теме: <b>{PRACTICE_NAME}</b>\n\n"
-        "📝 Вы можете сделать задания, чтобы проверить свои знания или вернуться в главное меню.",
-        reply_markup=start_practice_keyboard(),
-    )
+    user_id = str(callback_query.from_user.id)
+    await pre_practice_state(callback_query=callback_query, state=state, user_id=user_id, cur_activity_num=2,
+                             practice_state=Practice2State(), practice_name=PRACTICE_NAME)
 
 
-@router.callback_query(F.data == "start_practice", Practice2State.TASK1)
+@router.callback_query(F.data == "start_practice", Practice2State.START)
 async def send_practice_question1(callback_query: CallbackQuery, state: FSMContext):
+    await state.set_state(Practice2State.TASK1)
     task_data = TASKS["task1"]
     text = task_data["task_text"]
     await callback_query.message.edit_text(text)
@@ -91,5 +90,6 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
         return
 
     await state.clear()
+    await db.update_current_activity(user_id=message.from_user.id, current_practice=3)
     await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
                          reply_markup=menu_keyboard())
