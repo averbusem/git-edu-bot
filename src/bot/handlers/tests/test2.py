@@ -20,14 +20,14 @@ router = Router()
 
 @router.callback_query(F.data == "test2")
 async def test2_selected(callback_query: CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     await pre_test_state(callback_query, state, user_id,
                          test_number=2, cur_activity_num=2, test_state=Test2State(), test_name=TEST_NAME)
 
 
 @router.callback_query(F.data == "start_test", Test2State.QUESTION1)
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     previous_results = await db.get_test_results(user_id=user_id, test_number=2)
     marks_cur_test = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0}
     await state.update_data(cur_marks=marks_cur_test)
@@ -125,7 +125,7 @@ async def handle_test_answer6(callback_query: CallbackQuery, state: FSMContext):
 async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await process_test_answer(callback_query, state, test_number=2, question_key="question7", question_number=7,
                               questions=QUESTIONS)
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     await db.set_test_mark(user_id=user_id, test_number=2)
     await db.update_current_activity(user_id=user_id, current_test=3)
 

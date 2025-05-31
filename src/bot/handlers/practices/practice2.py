@@ -49,7 +49,7 @@ def check_task2(answer: str) -> str | None:
 
 @router.callback_query(F.data == "practice2")
 async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     await pre_practice_state(callback_query=callback_query, state=state, user_id=user_id, cur_activity_num=2,
                              practice_state=Practice2State(), practice_name=PRACTICE_NAME)
 

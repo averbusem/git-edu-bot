@@ -12,7 +12,7 @@ async def process_test_answer(callback_query: CallbackQuery, state: FSMContext, 
                               question_key: str, question_number: int, questions: dict,
                               next_state=None, next_question_key: str = None):
     user_answer = callback_query.data
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     state_data = await state.get_data()
     prev_results = state_data['prev_results']
     cur_results = state_data['cur_marks']
@@ -38,7 +38,7 @@ async def process_test_answer(callback_query: CallbackQuery, state: FSMContext, 
         await callback_query.message.answer(next_text, reply_markup=answer_keyboard())
 
 
-async def pre_test_state(callback_query: CallbackQuery, state: FSMContext, user_id: int, test_number: int,
+async def pre_test_state(callback_query: CallbackQuery, state: FSMContext, user_id: str, test_number: int,
                          cur_activity_num: int, test_state, test_name: str,):
     current_activity = await db.get_current_activity(user_id=user_id)
     cur_test = current_activity["test"]

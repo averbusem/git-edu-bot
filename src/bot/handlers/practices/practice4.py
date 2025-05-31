@@ -1,20 +1,13 @@
-import logging
-
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from src.bot.keyboards.user_keyboards import (menu_keyboard,
-                                              start_practice_keyboard)
+from src.bot.keyboards.user_keyboards import menu_keyboard
 from src.bot.states.practice_states import Practice4State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
 from src.bot.utils.practice_steps import pre_practice_state
 from src.db.database import db
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 PRACTICE_DATA = get_practice_data(4)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
@@ -93,7 +86,7 @@ def check_task5(answer: str) -> str | None:
 
 @router.callback_query(F.data == "practice4")
 async def practice4_selected(callback_query: CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     await pre_practice_state(callback_query=callback_query, state=state, user_id=user_id, cur_activity_num=4,
                              practice_state=Practice4State(), practice_name=PRACTICE_NAME)
 
@@ -103,8 +96,7 @@ async def send_practice_question1(callback_query: CallbackQuery, state: FSMConte
     await state.set_state(Practice4State.TASK1)
     task_data = TASKS["task1"]
     text = "".join(task_data["task_text"])
-    logger.debug(f"Sending task 1 text: {text}")
-    await callback_query.message.edit_text(text, parse_mode="HTML")
+    await callback_query.message.edit_text(text)
 
 
 @router.message(Practice4State.TASK1)
@@ -114,14 +106,13 @@ async def handle_practice_answer1(message: Message, state: FSMContext):
 
     error_key = check_task1(user_answer)
     if error_key:
-        await message.answer(format_task_feedback(task_data, error_key), parse_mode="HTML")
+        await message.answer(format_task_feedback(task_data, error_key))
         return
 
     await state.set_state(Practice4State.TASK2)
     task2_data = TASKS["task2"]
     text2 = "".join(task2_data["task_text"])
-    logger.debug(f"Sending task 2 text: {text2}")
-    await message.answer(text2, parse_mode="HTML")
+    await message.answer(text2)
 
 
 @router.message(Practice4State.TASK2)
@@ -131,14 +122,13 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
 
     error_key = check_task2(user_answer)
     if error_key:
-        await message.answer(format_task_feedback(task_data, error_key), parse_mode="HTML")
+        await message.answer(format_task_feedback(task_data, error_key))
         return
 
     await state.set_state(Practice4State.TASK3)
     task3_data = TASKS["task3"]
     text3 = "".join(task3_data["task_text"])
-    logger.debug(f"Sending task 3 text: {text3}")
-    await message.answer(text3, parse_mode="HTML")
+    await message.answer(text3)
 
 
 @router.message(Practice4State.TASK3)
@@ -148,14 +138,13 @@ async def handle_practice_answer3(message: Message, state: FSMContext):
 
     error_key = check_task3(user_answer)
     if error_key:
-        await message.answer(format_task_feedback(task_data, error_key), parse_mode="HTML")
+        await message.answer(format_task_feedback(task_data, error_key))
         return
 
     await state.set_state(Practice4State.TASK4)
     task4_data = TASKS["task4"]
     text4 = "".join(task4_data["task_text"])
-    logger.debug(f"Sending task 4 text: {text4}")
-    await message.answer(text4, parse_mode="HTML")
+    await message.answer(text4)
 
 
 @router.message(Practice4State.TASK4)
@@ -165,14 +154,13 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
 
     error_key = check_task4(user_answer)
     if error_key:
-        await message.answer(format_task_feedback(task_data, error_key), parse_mode="HTML")
+        await message.answer(format_task_feedback(task_data, error_key))
         return
 
     await state.set_state(Practice4State.TASK5)
     task5_data = TASKS["task5"]
     text5 = "".join(task5_data["task_text"])
-    logger.debug(f"Sending task 5 text: {text5}")
-    await message.answer(text5, parse_mode="HTML")
+    await message.answer(text5)
 
 
 @router.message(Practice4State.TASK5)
@@ -182,9 +170,9 @@ async def handle_practice_answer5(message: Message, state: FSMContext):
 
     error_key = check_task5(user_answer)
     if error_key:
-        await message.answer(format_task_feedback(task_data, error_key), parse_mode="HTML")
+        await message.answer(format_task_feedback(task_data, error_key))
         return
 
     await state.clear()
-    await db.update_current_activity(user_id=message.from_user.id, current_practice=5)
-    await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики", reply_markup=menu_keyboard(), parse_mode="HTML")
+    await db.update_current_activity(user_id=str(message.from_user.id), current_practice=5)
+    await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики", reply_markup=menu_keyboard())

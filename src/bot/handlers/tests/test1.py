@@ -23,8 +23,8 @@ router = Router()
 async def test1_selected(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(Test1State.QUESTION1)
     user_id = callback_query.from_user.id
-    await db.start_test(user_id=user_id, test_number=1)
-    test_mark = await db.get_test_mark(user_id=user_id, test_number=1)
+    await db.start_test(user_id=str(user_id), test_number=1)
+    test_mark = await db.get_test_mark(user_id=str(user_id), test_number=1)
     if test_mark is None:
         await callback_query.message.edit_text(
             f"Вы выбрали тест по теме: <b>{TEST_NAME}</b>\n\n"
@@ -45,7 +45,7 @@ async def test1_selected(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "start_test", Test1State.QUESTION1)
 async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
-    previous_results = await db.get_test_results(user_id=user_id, test_number=1)
+    previous_results = await db.get_test_results(user_id=str(user_id), test_number=1)
     marks_cur_test = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0}
     await state.update_data(cur_marks=marks_cur_test)
     await state.update_data(prev_results=previous_results)
@@ -143,8 +143,8 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await process_test_answer(callback_query, state, test_number=1, question_key="question7", question_number=7,
                               questions=QUESTIONS)
     user_id = callback_query.from_user.id
-    await db.set_test_mark(user_id=user_id, test_number=1)
-    await db.update_current_activity(user_id=user_id, current_test=2)
+    await db.set_test_mark(user_id=str(user_id), test_number=1)
+    await db.update_current_activity(user_id=str(user_id), current_test=2)
 
     state_data = await state.get_data()
     cur_results = state_data["cur_marks"]

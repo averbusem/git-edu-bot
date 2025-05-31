@@ -6,7 +6,7 @@ from src.bot.keyboards.user_keyboards import (menu_keyboard,
 from src.db.database import db
 
 
-async def pre_practice_state(callback_query: CallbackQuery, state: FSMContext, user_id: int, cur_activity_num: int,
+async def pre_practice_state(callback_query: CallbackQuery, state: FSMContext, user_id: str, cur_activity_num: int,
                              practice_state, practice_name: str):
     current_activity = await db.get_current_activity(user_id=user_id)
     cur_test = current_activity["test"]
@@ -19,7 +19,7 @@ async def pre_practice_state(callback_query: CallbackQuery, state: FSMContext, u
                                                reply_markup=menu_keyboard())
     else:
         await state.set_state(practice_state.START)
-        if cur_practice < cur_activity_num:
+        if cur_practice <= cur_activity_num:
             await callback_query.message.edit_text(
                 f"Вы выбрали практику по теме: <b>{practice_name}</b>\n\n"
                 "📝 Вы можете пройти практику, чтобы проверить свои знания или вернуться в главное меню.",

@@ -93,7 +93,7 @@ def check_task4(answer: str) -> str | None:
 
 @router.callback_query(F.data == "practice3")
 async def practice1_selected(callback_query: CallbackQuery, state: FSMContext):
-    user_id = callback_query.from_user.id
+    user_id = str(callback_query.from_user.id)
     await pre_practice_state(callback_query=callback_query, state=state, user_id=user_id, cur_activity_num=3,
                              practice_state=Practice3State(), practice_name=PRACTICE_NAME)
 
@@ -168,6 +168,6 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
         return
 
     await state.clear()
-    await db.update_current_activity(user_id=message.from_user.id, current_practice=4)
+    await db.update_current_activity(user_id=str(message.from_user.id), current_practice=4)
     await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
                          reply_markup=menu_keyboard())

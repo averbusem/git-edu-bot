@@ -19,7 +19,7 @@ router = Router()
 @router.callback_query(F.data == "theory2")
 @clear_last_keyboard
 async def start_theory2(callback: CallbackQuery, state: FSMContext):
-    user_id = callback.from_user.id
+    user_id = str(callback.from_user.id)
     current_activity = await db.get_current_activity(user_id=user_id)
     cur_test = current_activity["test"]
     cur_theory = current_activity["theory"]
@@ -50,7 +50,7 @@ async def theory2_step2(callback: CallbackQuery, state: FSMContext):
 @clear_last_keyboard
 async def theory2_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
-    await db.update_current_activity(user_id=callback.from_user.id, current_theory=3)
+    await db.update_current_activity(user_id=str(callback.from_user.id), current_theory=3)
     new_message = await callback.message.answer(
         "Урок завершен! Переходите к тесту или заданию", reply_markup=menu_keyboard()
     )
