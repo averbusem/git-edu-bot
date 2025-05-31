@@ -128,6 +128,10 @@ class Database:
             print(f"An error occurred while fetching user statistics: {e}")
             return None  # В случае ошибки возвращаем None
 
+    async def reset_day_points_all(self):
+        print("Resetting day_points for all users...")
+        await self.users.update_many({}, {"$set": {"day_points": 0}})
+
     async def close(self):
         self.client.close()
 
