@@ -14,7 +14,7 @@ router = Router()
 @router.message(Command("start"))
 async def start_command(message: Message, state: FSMContext):
     user_name = message.from_user.first_name
-    await db.add_new_user(message.from_user.id, message.from_user.username)
+    await db.add_new_user(str(message.from_user.id), message.from_user.username)
     await state.clear()
     await message.answer(f"Привет, {user_name}! Я - твой помощник в изучении Git",
                          reply_markup=start_keyboard())
@@ -24,7 +24,7 @@ async def start_command(message: Message, state: FSMContext):
 async def shop_command(message: Message):
     user_name = message.from_user.first_name
     user_id = message.from_user.id
-    all_points = await db.get_all_points(user_id)
+    all_points = await db.get_all_points(str(user_id))
 
     await message.answer(f"{user_name}, вперед за покупками!")
 

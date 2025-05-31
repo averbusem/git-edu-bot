@@ -25,7 +25,7 @@ async def rating_button(callback_query: CallbackQuery):
 
     # Находим пользователя в отсортированном списке
     user_index = next((index for index, user in enumerate(
-        sorted_users) if user['_id'] == user_id), None)
+        sorted_users) if user['_id'] == str(user_id)), None)
 
     if user_index is None:
         await callback_query.message.edit_text("Пользователь не найден.", reply_markup=menu_keyboard())
@@ -49,8 +49,7 @@ async def rating_button(callback_query: CallbackQuery):
     for index in range(start_index, end_index):
         user = sorted_users[index]
         if index == user_index:
-            ranking_message += f"{index +
-                                  1}.  <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+            ranking_message += f"{index + 1}.  <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
         else:
             ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
 
@@ -72,8 +71,7 @@ async def change_page(callback_query: CallbackQuery):
     for index in range(start_index, end_index):
         user = sorted_users[index]
         if user['_id'] == user_id:
-            ranking_message += f"{index +
-                                  1}. <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+            ranking_message += f"{index + 1}. <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
         else:
             ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
 

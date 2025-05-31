@@ -11,7 +11,7 @@ router = Router()
 async def tasks_list(callback_query: CallbackQuery, state: FSMContext):
     # Вывод списка заданий
     await callback_query.message.edit_text(
-        "<b>Вы выбрали 'Выполнение заданий'! 🔧</b>\n\n"
+        "Вы выбрали <b>Выполнение заданий 🔧</b>\n\n"
         "Пожалуйста, выберите задание, которое вы хотели бы выполнить",
         reply_markup=practice_list_keyboard()
     )
