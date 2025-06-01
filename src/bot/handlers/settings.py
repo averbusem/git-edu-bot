@@ -8,3 +8,5 @@ TOTAL_PRACTICES = 8
 
 TOTAL_STICKERS = 15
 STICKER_PRICES = [10, 20, 30, 10, 10, 10, 20, 30, 10, 10, 10, 10, 10, 40, 30]
+
+STICKER_PACK = "https://t.me/addstickers/git_edu_stickers_by_fStikBot"

@@ -141,9 +141,6 @@ class Database:
         user = await self.users.find_one({"_id": f'{user_id}'})
         return user.get("all_points", 0)
 
-    async def close(self):
-        self.client.close()
-
     async def is_sticker_owned(self, user_id: str, sticker_number: int):
         user = await self.users.find_one({"_id": str(user_id)})
         stickers = user["stickers"]
@@ -154,6 +151,14 @@ class Database:
             {"_id": str(user_id)},
             {"$set": {f"stickers.{sticker_number - 1}": True}}
         )
+
+    async def are_all_stickers_owned(self, user_id: str) -> bool:
+        user = await self.users.find_one({"_id": str(user_id)})
+        stickers = user.get("stickers", [])
+        return all(stickers)
+
+    async def close(self):
+        self.client.close()
 
 
 db = Database()

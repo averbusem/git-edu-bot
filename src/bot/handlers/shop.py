@@ -49,4 +49,9 @@ async def buy_sticker(callback_query: CallbackQuery):
     await send_photo(callback_query, sticker_number)
     sticker_path = f"../data/shop/{sticker_number}.webp"
     await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
+
+    if await db.are_all_stickers_owned(user_id):
+        link = settings.STICKER_PACK
+        await callback_query.message.answer(f"Ты собрал все стикеры! Вот ссылка на стикерпак:\n{link}")
+
     await callback_query.answer()
