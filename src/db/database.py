@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from src.bot.handlers import settings
 from src.db.config import (DB_NAME, MONGO_URI, RESULTS_COLLECTION,
                            USERS_COLLECTION)
 
@@ -25,7 +26,8 @@ class Database:
                 "day_points": day_points,
                 "all_points": all_points,
                 # средняя оценка за все тесты (считается после прохождения всех тестов)
-                "average_score": 0.0
+                "average_score": 0.0,
+                "stickers": [False] * settings.TOTAL_STICKERS,
             }
             return await self.users.insert_one(new_user)
 
@@ -101,7 +103,7 @@ class Database:
                       "practice": user_info["current_practice"]}
         return activities
 
-    async def get_user_statistics(self, user_id: int):
+    async def get_user_statistics(self, user_id: str):
         try:
             user_info = await self.users.find_one({"_id": f'{user_id}'})
             if user_info:
@@ -128,19 +130,30 @@ class Database:
         except Exception as e:
             print(f"An error occurred while fetching all users: {e}")
 
-    async def try_spend_points(self, user_id: int, price: int) -> bool:
+    async def try_spend_points(self, user_id: str, price: int) -> bool:
         result = await self.users.update_one(
             {"_id": f'{user_id}', "all_points": {"$gte": price}},
             {"$inc": {"all_points": -price}}
         )
         return result.modified_count == 1
 
-    async def get_all_points(self, user_id: int) -> int:
+    async def get_all_points(self, user_id: str) -> int:
         user = await self.users.find_one({"_id": f'{user_id}'})
         return user.get("all_points", 0)
 
     async def close(self):
         self.client.close()
+
+    async def is_sticker_owned(self, user_id: str, sticker_number: int):
+        user = await self.users.find_one({"_id": str(user_id)})
+        stickers = user["stickers"]
+        return stickers[sticker_number - 1] == True
+
+    async def set_sticker_owned(self, user_id: str, sticker_number: int):
+        await self.users.update_one(
+            {"_id": str(user_id)},
+            {"$set": {f"stickers.{sticker_number - 1}": True}}
+        )
 
 
 db = Database()
