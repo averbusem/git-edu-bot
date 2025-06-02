@@ -52,9 +52,20 @@ async def theory2_step2(callback: CallbackQuery, state: FSMContext):
 async def theory2_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
     user_id = str(callback.from_user.id)
-    await db.update_points(user_id=user_id, points=settings.THEORY_POINTS)
+    has_done = (await db.get_current_theory(user_id) > 2)
     await db.update_current_activity(user_id=user_id, current_theory=3)
-    new_message = await callback.message.answer(
-        f"Урок завершен! Вы получили {settings.THEORY_POINTS} опыта.\n\nПереходите к тесту или заданию.", reply_markup=menu_keyboard()
-    )
-    return new_message
+
+    if not has_done:
+        await db.update_points(user_id=callback.from_user.id, points=settings.THEORY_POINTS)
+        new_message = await callback.message.answer(
+            f"Урок завершен! Вы получили {
+                settings.THEORY_POINTS} 🔆\n\nПереходите к тесту или заданию.",
+            reply_markup=menu_keyboard()
+        )
+        return new_message
+    else:
+        new_message = await callback.message.answer(
+            f"Урок повторен!\n\nПереходите к тесту или заданию.",
+            reply_markup=menu_keyboard()
+        )
+        return new_message

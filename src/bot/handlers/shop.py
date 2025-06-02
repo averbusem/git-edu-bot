@@ -9,7 +9,7 @@ router = Router()
 
 
 async def send_photo(callback_query: CallbackQuery, photo_number: int):
-    photo_path = f"../data/shop/{photo_number}.jpg"
+    photo_path = f"../data/shop/locked/{photo_number}.jpg"
     photo = FSInputFile(photo_path)
     user_id = callback_query.from_user.id
     all_points = await db.get_all_points(user_id)
@@ -43,7 +43,7 @@ async def buy_sticker(callback_query: CallbackQuery):
 
     await db.set_sticker_owned(user_id, sticker_number)
     await send_photo(callback_query, sticker_number)
-    sticker_path = f"../data/shop/{sticker_number}.webp"
+    sticker_path = f"../data/shop/unlocked/{sticker_number}.webp"
     await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
 
     if await db.are_all_stickers_owned(user_id):
@@ -56,6 +56,6 @@ async def buy_sticker(callback_query: CallbackQuery):
 @router.callback_query(lambda c: c.data.startswith("show_"))
 async def show_sticker(callback_query: CallbackQuery):
     sticker_number = int(callback_query.data.split("_")[1])
-    sticker_path = f"../data/shop/{sticker_number}.webp"
+    sticker_path = f"../data/shop/unlocked/{sticker_number}.webp"
     await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
     await callback_query.answer()

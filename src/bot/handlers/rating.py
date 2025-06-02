@@ -45,13 +45,14 @@ async def rating_button(callback_query: CallbackQuery):
         end_index = user_index + 2
 
     # Формируем сообщение с рейтингом
-    ranking_message = "Рейтинг:\n\n"
+    day_points = await db.get_day_points(user_id)
+    ranking_message = f"За сегодня Вы получили: {day_points} 🔆\n\n Рейтинг:\n"
     for index in range(start_index, end_index):
         user = sorted_users[index]
         if index == user_index:
-            ranking_message += f"{index + 1}.  <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+            ranking_message += f"{index + 1}.  <b>{user['username']}</b> - {user['day_points']} 👈\n"
         else:
-            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
+            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']}\n"
 
     keyboard = rating_keyboard(start_index, total_users)
     await callback_query.message.edit_text(ranking_message, reply_markup=keyboard)
@@ -71,9 +72,9 @@ async def change_page(callback_query: CallbackQuery):
     for index in range(start_index, end_index):
         user = sorted_users[index]
         if user['_id'] == user_id:
-            ranking_message += f"{index + 1}. <b>{user['username']}</b> - {user['day_points']} очков 👈\n"
+            ranking_message += f"{index + 1}. <b>{user['username']}</b> - {user['day_points']} 👈\n"
         else:
-            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']} очков\n"
+            ranking_message += f"{index + 1}. {user['username']} - {user['day_points']}\n"
 
     keyboard = rating_keyboard(start_index, total_users)
     await callback_query.message.edit_text(ranking_message, reply_markup=keyboard)

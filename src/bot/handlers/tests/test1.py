@@ -144,12 +144,23 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await process_test_answer(callback_query, state, test_number=1, question_key="question7", question_number=7,
                               questions=QUESTIONS)
     user_id = callback_query.from_user.id
+    has_done = (await db.get_current_test(user_id) > 1)
     await db.set_test_mark(user_id=str(user_id), test_number=1)
     await db.update_current_activity(user_id=str(user_id), current_test=2)
 
-    test_mark = await db.get_test_mark(user_id=str(user_id), test_number=1)
-    points = round(test_mark / 100 * settings.TEST_POINTS)
-    await db.update_points(user_id=str(user_id), points=points)
-    await callback_query.message.answer(
-        f"Тест завершён. Ваша оценка за тест {test_mark}\n\nВы получили {points} опыта.\n\nСпасибо за участие!",
-        reply_markup=menu_keyboard())
+    state_data = await state.get_data()
+    cur_results = state_data["cur_marks"]
+    answers = cur_results
+    total = len(answers)
+    correct_count = sum(1 for v in answers.values() if v)
+    score = round((correct_count / total) * 100, 2) if total else 0.0
+
+    if not has_done:
+        points = round(score / 100 * settings.TEST_POINTS)
+        await db.update_points(user_id=str(user_id), points=points)
+        await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nВы получили {points} 🔆 Спасибо за участие!",
+                                            reply_markup=menu_keyboard())
+    else:
+        await callback_query.message.answer(
+            f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за повторное прохождение!",
+            reply_markup=menu_keyboard())

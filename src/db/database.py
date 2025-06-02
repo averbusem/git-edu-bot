@@ -111,9 +111,6 @@ class Database:
                     "current_theory": user_info.get("current_theory", 0),
                     "current_test": user_info.get("current_test", 0),
                     "current_practice": user_info.get("current_practice", 0),
-
-                    "all_points": user_info.get("all_points", 0),
-                    "day_points": user_info.get("day_points", 0)
                 }
             else:
                 return None
@@ -140,6 +137,22 @@ class Database:
     async def get_all_points(self, user_id: str) -> int:
         user = await self.users.find_one({"_id": f'{user_id}'})
         return user.get("all_points", 0)
+
+    async def get_day_points(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("day_points", 0)
+
+    async def get_current_theory(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_theory", 0)
+
+    async def get_current_test(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_test", 0)
+
+    async def get_current_practice(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_practice", 0)
 
     async def is_sticker_owned(self, user_id: str, sticker_number: int):
         user = await self.users.find_one({"_id": str(user_id)})

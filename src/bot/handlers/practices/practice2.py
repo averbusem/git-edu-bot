@@ -91,8 +91,14 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
         return
 
     await state.clear()
-    await db.update_points(user_id=str(message.from_user.id), points=settings.PRACTICE_POINTS)
-    await db.update_current_activity(user_id=str(message.from_user.id), current_practice=3)
-    await message.answer(f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\n"
-                         f"Вы получили {settings.PRACTICE_POINTS} опыта.",
-                         reply_markup=menu_keyboard())
+    user_id = message.from_user.id
+    has_done = (await db.get_current_practice(user_id) > 2)
+    await db.update_current_activity(user_id=str(user_id), current_practice=3)
+
+    if not has_done:
+        await db.update_points(user_id=str(message.from_user.id), points=settings.PRACTICE_POINTS)
+        await message.answer(f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {settings.PRACTICE_POINTS} 🔆",
+                             reply_markup=menu_keyboard())
+    else:
+        await message.answer(f"✅ Поздравляем! Вы успешно повторили все задания практики\n\n",
+                             reply_markup=menu_keyboard())
