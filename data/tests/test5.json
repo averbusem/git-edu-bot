@@ -34,10 +34,10 @@
         "question4": {
             "question": "📌 4. Какая команда связывает локальный репозиторий с удалённым?",
             "options": {
-                "A": "git link origin <URL репозитория>",
-                "B": "git remote add origin <URL репозитория>",
-                "C": "git connect origin <URL репозитория>",
-                "D": "git attach origin <URL репозитория>"
+                "A": "git link origin &lt;URL репозитория&gt;",
+                "B": "git remote add origin &lt;URL репозитория&gt;",
+                "C": "git connect origin &lt;URL репозитория&gt;",
+                "D": "git attach origin &lt;URL репозитория&gt;"
             },
             "correct": "B"
         },
