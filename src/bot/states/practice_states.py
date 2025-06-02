@@ -22,3 +22,12 @@ class Practice4State(StatesGroup):
     TASK3 = State()
     TASK4 = State()
     TASK5 = State()
+
+
+class Practice5State(StatesGroup):
+    START = State()
+    TASK1 = State()
+    TASK2 = State()
+    TASK3 = State()
+    TASK4 = State()
+    TASK5 = State()
