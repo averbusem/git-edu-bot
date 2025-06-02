@@ -2,6 +2,7 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from src.bot.handlers import settings
+from src.db.database import db
 
 
 def start_keyboard():
@@ -155,12 +156,17 @@ def rating_keyboard(start_index: int, total_users: int):
     return keyboard.as_markup()
 
 
-def shop_keyboard(photo_number: int):
+async def shop_keyboard(user_id: str, photo_number: int):
     keyboard = InlineKeyboardBuilder()
 
     if photo_number > 1:
         keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
-    keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
+
+    if await db.is_sticker_owned(user_id, photo_number):
+        keyboard.add(InlineKeyboardButton(text="Показать", callback_data=f"show_{photo_number}"))
+    else:
+        keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
+
     if photo_number < settings.TOTAL_STICKERS:
         keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"next_{photo_number + 1}"))
 

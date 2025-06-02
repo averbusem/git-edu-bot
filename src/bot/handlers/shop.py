@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto, Message
+from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 
 from src.bot.handlers import settings
 from src.bot.handlers.keyboards.user_keyboards import shop_keyboard
@@ -15,7 +15,7 @@ async def send_photo(callback_query: CallbackQuery, photo_number: int):
     all_points = await db.get_all_points(user_id)
     media = InputMediaPhoto(
         media=photo, caption=f"Стоимость: {settings.STICKER_PRICES[photo_number - 1]}🔆\n\n У Вас: {all_points}🔆")
-    await callback_query.message.edit_media(media, reply_markup=shop_keyboard(photo_number))
+    await callback_query.message.edit_media(media, reply_markup=await shop_keyboard(str(user_id), photo_number))
 
 
 @router.callback_query(lambda c: c.data.startswith("prev_") or c.data.startswith("next_"))
@@ -35,10 +35,6 @@ async def buy_sticker(callback_query: CallbackQuery):
         await callback_query.answer("Пользователь не найден.", show_alert=True)
         return
 
-    if await db.is_sticker_owned(user_id, sticker_number):
-        await callback_query.answer("Вы уже купили этот стикер.", show_alert=True)
-        return
-
     price = settings.STICKER_PRICES[sticker_number - 1]
     success = await db.try_spend_points(user_id, price)
     if not success:
@@ -54,4 +50,12 @@ async def buy_sticker(callback_query: CallbackQuery):
         link = settings.STICKER_PACK
         await callback_query.message.answer(f"Ты собрал все стикеры! Вот ссылка на стикерпак:\n{link}")
 
+    await callback_query.answer()
+
+
+@router.callback_query(lambda c: c.data.startswith("show_"))
+async def show_sticker(callback_query: CallbackQuery):
+    sticker_number = int(callback_query.data.split("_")[1])
+    sticker_path = f"../data/shop/{sticker_number}.webp"
+    await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
     await callback_query.answer()

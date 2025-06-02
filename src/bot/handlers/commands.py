@@ -31,4 +31,4 @@ async def shop_command(message: Message):
     photo_path = "../data/shop/1.jpg"
     photo = FSInputFile(photo_path)
 
-    await message.answer_photo(photo=photo, reply_markup=shop_keyboard(1), caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")
+    await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1), caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")
