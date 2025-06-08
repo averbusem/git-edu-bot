@@ -8,8 +8,7 @@ router = Router()
 
 
 @router.callback_query(F.data == "main_menu")
-async def manu_button(callback_query: CallbackQuery, state: FSMContext):
+async def menu_button(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
-    user_name = callback_query.from_user.first_name
-    await callback_query.message.edit_text(f"Привет, {user_name}! Я - твой помощник в изучении Git",
+    await callback_query.message.edit_text("📋 <b>Главное меню</b> — выберите раздел:",
                                            reply_markup=start_keyboard())

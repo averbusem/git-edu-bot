@@ -31,3 +31,27 @@ def get_theory_data(theory_number: int) -> dict:
                 messages[key] = ''.join(messages[key])
 
     return data
+
+
+def get_practice_data(practice_number: int) -> dict:
+    """
+    Загружает данные раздела практики по его номеру и рекурсивно объединяет
+    все списки строк в единые строки.
+    """
+    file_name = f"practice{practice_number}.json"
+    full_path = os.path.join(DATA_DIR, "practices", file_name)
+    data = load_json(full_path)
+
+    def merge_lists(item, key=None):
+        if isinstance(item, list) and all(isinstance(el, str) for el in item):
+            if key == "expected":
+                return item
+            return "".join(item)
+        if isinstance(item, list):
+            return [merge_lists(el) for el in item]
+        if isinstance(item, dict):
+            return {k: merge_lists(v, k) for k, v in item.items()}
+
+        return item
+
+    return merge_lists(data)
