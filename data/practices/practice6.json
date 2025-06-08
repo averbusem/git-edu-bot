@@ -9,7 +9,6 @@
         "Создайте файл test.txt с содержимым \"Test\" и внесите изменения (например, добавьте строку \"New line\"). Затем отмените изменения в файле, чтобы вернуть его к состоянию последнего коммита. В качестве ответа пришлите вывод команды:\n<code>git status</code>"
       ],
       "expected": "On branch main\nnothing to commit, working tree clean",
-      ],
       "errors": {
         "changes_not_staged": "❌ Изменения не добавлены в индекс",
         "file_deleted": "❌ Файл удален",
