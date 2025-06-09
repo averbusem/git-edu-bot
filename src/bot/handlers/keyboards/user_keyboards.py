@@ -149,14 +149,14 @@ def rating_keyboard(start_index: int, total_users: int):
 
     # Кнопка назад (если не первая страница)
     if start_index > 0:
-        prev_index = max(0, start_index - 3)
+        prev_index = max(0, start_index - settings.USERS_PER_PAGE)
         keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"rating_page:{prev_index}"))
 
     keyboard.add(InlineKeyboardButton(text="Главное меню", callback_data="main_menu"))
 
     # Кнопка вперед (если есть следующие)
-    if start_index + 3 < total_users:
-        next_index = start_index + 3
+    if start_index + settings.USERS_PER_PAGE < total_users:
+        next_index = start_index + settings.USERS_PER_PAGE
         keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"rating_page:{next_index}"))
 
     return keyboard.as_markup()

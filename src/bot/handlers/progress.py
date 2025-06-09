@@ -20,7 +20,7 @@ async def learn_button(callback_query: CallbackQuery):
         completed_practice = user_info.get("current_practice", 0) - 2
 
         progress_message = (
-            f"{callback_query.from_user.first_name}, Ваш прогресс:\n\n"
+            f"📈<b>Прогресс</b>\n\n"
             f"Теория: {completed_theories} из {settings.TOTAL_THEORIES}\n"
             f"Тесты: {completed_tests} из {settings.TOTAL_TESTS}\n"
             f"Практика: {completed_practice} из {settings.TOTAL_PRACTICES}\n\n"
