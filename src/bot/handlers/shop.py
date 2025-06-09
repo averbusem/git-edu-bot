@@ -48,7 +48,9 @@ async def buy_sticker(callback_query: CallbackQuery):
 
     if await db.are_all_stickers_owned(user_id):
         link = settings.STICKER_PACK
-        await callback_query.message.answer(f"Ты собрал все стикеры! Вот ссылка на стикерпак:\n{link}")
+        await callback_query.message.answer(
+            f'Вы собрали все стикеры!\n\n <a href="{link}">стикерпак</a> 🎉',
+        )
 
     await callback_query.answer()
 

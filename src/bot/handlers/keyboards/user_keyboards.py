@@ -21,6 +21,12 @@ def menu_keyboard():
     return keyboard.as_markup()
 
 
+def menu_answer_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(InlineKeyboardButton(text="Главное меню", callback_data="main_menu_answer"))
+    return keyboard.as_markup()
+
+
 def practice_choice_keyboard():
     # Клавиатура для выбора типа практики или возврата в главное меню
     keyboard = InlineKeyboardBuilder()
