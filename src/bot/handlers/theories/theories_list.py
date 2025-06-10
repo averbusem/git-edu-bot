@@ -9,8 +9,9 @@ router = Router()
 
 @router.callback_query(F.data == "learn_button")
 async def learn_button(callback_query: CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(
+    msg = await callback_query.message.edit_text(
         "<b>📚 Изучение теории</b>\n\n"
         "Выберите урок, который вы хотели бы изучить из списка ниже:",
         reply_markup=theory_list_keyboard(),
     )
+    return msg
