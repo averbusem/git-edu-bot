@@ -23,3 +23,8 @@ class Theory4State(StatesGroup):
     MESSAGE3 = State()
     MESSAGE4 = State()
     MESSAGE5 = State()
+
+
+class Theory5State(StatesGroup):
+    MESSAGE2 = State()
+    MESSAGE3 = State()
