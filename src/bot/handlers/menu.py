@@ -10,6 +10,5 @@ router = Router()
 @router.callback_query(F.data == "main_menu")
 async def menu_button(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
-    msg = await callback_query.message.edit_text("📋 <b>Главное меню</b> — выберите раздел:",
-                                                 reply_markup=start_keyboard())
-    return msg
+    return await callback_query.message.edit_text("📋 <b>Главное меню</b> — выберите раздел:",
+                                                  reply_markup=start_keyboard())
