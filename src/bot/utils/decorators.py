@@ -28,14 +28,13 @@ def remove_last_keyboard(func):
     async def wrapper(event, state: FSMContext, *args, **kwargs):
         data = await state.get_data()
         last_message_id = data.get("last_message_id")
-
         result = await func(event, state, *args, **kwargs)
 
         current_message_id = None
         if isinstance(result, types.Message):
             current_message_id = result.message_id
-        elif isinstance(event, types.CallbackQuery):
-            current_message_id = event.message.message_id
+        elif isinstance(result, types.CallbackQuery):
+            current_message_id = result.message.message_id
 
         # Удаляем клавиатуру, только если это новый message_id
         if last_message_id and current_message_id and last_message_id != current_message_id:
@@ -47,7 +46,6 @@ def remove_last_keyboard(func):
             await remove_keyboard(event.bot, chat_id, last_message_id)
 
         if current_message_id:
-            print("id=", current_message_id)
             await state.update_data(last_message_id=current_message_id)
 
         return result
