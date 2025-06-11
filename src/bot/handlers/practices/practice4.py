@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from src.bot.handlers import settings
-from src.bot.handlers.keyboards.user_keyboards import menu_keyboard
+from src.bot.keyboards.user_keyboards import menu_keyboard
 from src.bot.states.practice_states import Practice4State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback

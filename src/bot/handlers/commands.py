@@ -4,9 +4,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile, Message
 
 from src.bot.handlers import settings
-from src.bot.handlers.keyboards.user_keyboards import (menu_answer_keyboard,
-                                                       shop_keyboard,
-                                                       start_keyboard)
+from src.bot.keyboards.user_keyboards import (menu_answer_keyboard,
+                                              shop_keyboard, start_keyboard)
 from src.db.database import db
 
 router = Router()

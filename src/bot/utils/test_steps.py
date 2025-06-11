@@ -1,9 +1,8 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers.keyboards.user_keyboards import (answer_keyboard,
-                                                       menu_keyboard,
-                                                       start_test_keyboard)
+from src.bot.keyboards.user_keyboards import (answer_keyboard, menu_keyboard,
+                                              start_test_keyboard)
 from src.bot.utils.test_formatter import (format_question_summary,
                                           format_question_text)
 from src.db.database import db

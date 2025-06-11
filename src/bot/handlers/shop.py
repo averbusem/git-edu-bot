@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 
 from src.bot.handlers import settings
-from src.bot.handlers.keyboards.user_keyboards import shop_keyboard
+from src.bot.keyboards.user_keyboards import shop_keyboard
 from src.db.database import db
 
 router = Router()

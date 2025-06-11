@@ -1,8 +1,8 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers.keyboards.user_keyboards import (menu_keyboard,
-                                                       start_practice_keyboard)
+from src.bot.keyboards.user_keyboards import (menu_keyboard,
+                                              start_practice_keyboard)
 from src.db.database import db
 
 

@@ -3,8 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from src.bot.handlers import settings
-from src.bot.handlers.keyboards.user_keyboards import (answer_keyboard,
-                                                       menu_keyboard)
+from src.bot.keyboards.user_keyboards import answer_keyboard, menu_keyboard
 from src.bot.states.test_states import Test4State
 from src.bot.utils.data_loader import get_test_data
 from src.bot.utils.test_formatter import format_question_text

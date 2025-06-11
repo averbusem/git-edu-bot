@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers.keyboards.user_keyboards import practice_list_keyboard
+from src.bot.keyboards.user_keyboards import practice_list_keyboard
 
 router = Router()
 
