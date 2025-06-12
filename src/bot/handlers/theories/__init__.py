@@ -3,7 +3,7 @@ from aiogram import Router
 
 def get_theory_router() -> Router:
     from src.bot.handlers.theories import (theories_list, theory1, theory2,
-                                           theory3, theory4)
+                                           theory3, theory4, theory5)
 
     router = Router()
     router.include_router(theories_list.router)
@@ -11,5 +11,6 @@ def get_theory_router() -> Router:
     router.include_router(theory2.router)
     router.include_router(theory3.router)
     router.include_router(theory4.router)
+    router.include_router(theory5.router)
     # Подключения роутеров из файлов в handlers/theories
     return router
