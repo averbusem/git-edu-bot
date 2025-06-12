@@ -24,12 +24,14 @@ async def start_command(message: Message, state: FSMContext):
 
 
 @router.message(Command("shop"))
-async def shop_command(message: Message):
+@remove_last_keyboard
+async def shop_command(message: Message, state: FSMContext):
     user_name = message.from_user.first_name
     user_id = message.from_user.id
     all_points = await db.get_all_points(str(user_id))
-
-    await message.answer(f"🛒<b>Магазин</b>\n\n{user_name}, здесь Вы можете приобрести забавные стикеры про git за полученные 🔆")
+    await state.clear()
+    await message.answer(
+        f"🛒<b>Магазин</b>\n\n{user_name}, здесь Вы можете приобрести забавные стикеры про git за полученные 🔆")
 
     photo_num = f"{1}.jpg"
 
@@ -38,12 +40,13 @@ async def shop_command(message: Message):
         photo_path = os.path.join(photo_path_pattern, photo_num)
         # photo_path = "../data/shop/locked/1.jpg"
         photo = FSInputFile(photo_path)
-        await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1))
+        msg = await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1))
 
     else:
         photo_path_pattern = os.path.abspath("data/shop/locked/")
         photo_path = os.path.join(photo_path_pattern, photo_num)
         # photo_path = "../data/shop/unlocked/1.jpg"
         photo = FSInputFile(photo_path)
-        await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1),
-                                   caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")
+        msg = await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1),
+                                         caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")
+    return msg

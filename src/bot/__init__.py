@@ -6,7 +6,7 @@ from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 
 from src.bot.handlers import get_handlers_router
-from src.bot.middlewares.remove_keyboard import UpdateLastMessageIdMiddleware
+from src.bot.middlewares.update_message_id import UpdateLastMessageIdMiddleware
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
