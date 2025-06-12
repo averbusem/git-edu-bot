@@ -13,22 +13,23 @@ async def pre_practice_state(callback_query: CallbackQuery, state: FSMContext, u
     cur_theory = current_activity["theory"]
     cur_practice = current_activity["practice"]
     if any([cur_theory < cur_activity_num, cur_test <
-            cur_activity_num, cur_practice < cur_activity_num]):
-        await callback_query.message.edit_text("❗️Вы ещё не прошли предыдущий урок\n\n"
-                                               "Возвращайтесь, когда выполните всё в предыдущих уроках",
-                                               reply_markup=menu_keyboard())
+           cur_activity_num, cur_practice < cur_activity_num]):
+        msg = await callback_query.message.edit_text("❗️Вы ещё не прошли предыдущий урок\n\n"
+                                                     "Возвращайтесь, когда выполните всё в предыдущих уроках",
+                                                     reply_markup=menu_keyboard())
     else:
         await state.set_state(practice_state.START)
         if cur_practice <= cur_activity_num:
-            await callback_query.message.edit_text(
+            msg = await callback_query.message.edit_text(
                 f"Вы выбрали практику по теме: <b>{practice_name}</b>\n\n"
                 "📝 Вы можете пройти практику, чтобы проверить свои знания или вернуться в главное меню.",
                 reply_markup=start_practice_keyboard(),
             )
         else:
-            await callback_query.message.edit_text(
+            msg = await callback_query.message.edit_text(
                 f"Вы выбрали практику по теме: <b>{practice_name}</b>\n\n"
                 f"📝 Вы можете пройти практику, чтобы проверить свои знания или вернуться в главное меню.\n\n"
                 f"❗ Вы уже проходили эту практику до конца",
                 reply_markup=start_practice_keyboard(),
             )
+    return msg

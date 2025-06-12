@@ -35,10 +35,7 @@ async def process_test_answer(callback_query: CallbackQuery, state: FSMContext, 
         await state.set_state(next_state)
         next_data = questions[next_question_key]
         next_text = format_question_text(next_data)
-        msg = await callback_query.message.answer(next_text, reply_markup=answer_keyboard())
-        await state.update_data(last_message_id=msg.message_id)
-        # print('test steps id =', msg.message_id)
-        return msg
+        return await callback_query.message.answer(next_text, reply_markup=answer_keyboard())
 
 
 async def pre_test_state(callback_query: CallbackQuery, state: FSMContext, user_id: str, test_number: int,

@@ -17,20 +17,18 @@ router = Router()
 @router.callback_query(F.data == "theory1")
 async def start_theory1(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory1State.MESSAGE2)
-    msg = await callback.message.edit_text(
+    return await callback.message.edit_text(
         THEORY_MESSAGES["message1"], reply_markup=next_massage_keyboard()
     )
-    return msg
 
 
 @router.callback_query(F.data == "next", Theory1State.MESSAGE2)
 @remove_last_keyboard
 async def theory1_step2(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory1State.MESSAGE3)
-    msg = await callback.message.answer(
+    return await callback.message.answer(
         THEORY_MESSAGES["message2"], reply_markup=next_massage_keyboard()
     )
-    return msg
 
 
 @router.callback_query(F.data == "next", Theory1State.MESSAGE3)
@@ -38,7 +36,6 @@ async def theory1_step2(callback: CallbackQuery, state: FSMContext):
 async def theory1_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
     await db.update_current_activity(user_id=callback.from_user.id, current_theory=2)
-    msg = await callback.message.answer(
+    return await callback.message.answer(
         "Урок завершен! Переходите к тесту или заданию", reply_markup=menu_keyboard()
     )
-    return msg

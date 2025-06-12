@@ -91,5 +91,5 @@ async def handle_practice_answer2(message: Message, state: FSMContext):
 
     await state.clear()
     await db.update_current_activity(user_id=message.from_user.id, current_practice=3)
-    await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
-                         reply_markup=menu_keyboard())
+    return await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
+                                reply_markup=menu_keyboard())
