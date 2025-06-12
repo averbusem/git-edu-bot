@@ -1,6 +1,9 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from src.bot.handlers import settings
+from src.db.database import db
+
 
 def start_keyboard():
     # Начальная клавиатура с основными кнопками
@@ -15,6 +18,12 @@ def menu_keyboard():
     # Клавиатура для возврата в меню (аналогично команде /start)
     keyboard = InlineKeyboardBuilder()
     keyboard.row(InlineKeyboardButton(text="Главное меню", callback_data="main_menu"))
+    return keyboard.as_markup()
+
+
+def menu_answer_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(InlineKeyboardButton(text="Главное меню", callback_data="main_menu_answer"))
     return keyboard.as_markup()
 
 
@@ -123,4 +132,52 @@ def start_practice_keyboard():
     keyboard = InlineKeyboardBuilder()
     keyboard.button(text="Пройти практику", callback_data="start_practice")
     keyboard.button(text="Главное меню", callback_data="main_menu")
+    return keyboard.as_markup()
+
+
+def progress_keyboard():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.row(
+        InlineKeyboardButton(text="Рейтинг", callback_data="rating"),
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+    )
+    return keyboard.as_markup()
+
+
+def rating_keyboard(start_index: int, total_users: int):
+    keyboard = InlineKeyboardBuilder()
+
+    # Кнопка назад (если не первая страница)
+    if start_index > 0:
+        prev_index = max(0, start_index - settings.USERS_PER_PAGE)
+        keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"rating_page:{prev_index}"))
+
+    keyboard.add(InlineKeyboardButton(text="Главное меню", callback_data="main_menu"))
+
+    # Кнопка вперед (если есть следующие)
+    if start_index + settings.USERS_PER_PAGE < total_users:
+        next_index = start_index + settings.USERS_PER_PAGE
+        keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"rating_page:{next_index}"))
+
+    return keyboard.as_markup()
+
+
+async def shop_keyboard(user_id: str, photo_number: int):
+    keyboard = InlineKeyboardBuilder()
+
+    if photo_number > 1:
+        keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
+
+    if await db.is_sticker_owned(user_id, photo_number):
+        keyboard.add(InlineKeyboardButton(text="Получить", callback_data=f"show_{photo_number}"))
+    else:
+        keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
+
+    if photo_number < settings.TOTAL_STICKERS:
+        keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"next_{photo_number + 1}"))
+
+    keyboard.row(
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu_answer")
+    )
+
     return keyboard.as_markup()

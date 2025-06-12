@@ -2,6 +2,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
+from src.bot.handlers import settings
 from src.bot.keyboards.user_keyboards import answer_keyboard, menu_keyboard
 from src.bot.states.test_states import Test3State
 from src.bot.utils.data_loader import get_test_data
@@ -126,6 +127,7 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     await process_test_answer(callback_query, state, test_number=3, question_key="question7", question_number=7,
                               questions=QUESTIONS)
     user_id = str(callback_query.from_user.id)
+    has_done = (await db.get_current_test(user_id) > 3)
     await db.set_test_mark(user_id=user_id, test_number=3)
     await db.update_current_activity(user_id=user_id, current_test=4)
 
@@ -135,5 +137,14 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     total = len(answers)
     correct_count = sum(1 for v in answers.values() if v)
     score = round((correct_count / total) * 100, 2) if total else 0.0
-    return await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за участие!",
-                                               reply_markup=menu_keyboard())
+
+    if not has_done:
+        points = round(score / 100 * settings.TEST_POINTS)
+        await db.update_points(user_id=str(user_id), points=points)
+        return await callback_query.message.answer(
+            f"Тест завершён на оценку <b>{score}%</b>\n\nВы получили {points} 🔆 Спасибо за участие!",
+            reply_markup=menu_keyboard())
+    else:
+        return await callback_query.message.answer(
+            f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за повторное прохождение!",
+            reply_markup=menu_keyboard())
