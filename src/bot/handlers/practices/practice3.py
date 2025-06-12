@@ -2,8 +2,8 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from src.bot.keyboards.user_keyboards import (menu_keyboard,
-                                              start_practice_keyboard)
+from src.bot.handlers import settings
+from src.bot.keyboards.user_keyboards import menu_keyboard
 from src.bot.states.practice_states import Practice3State
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
@@ -13,7 +13,6 @@ from src.db.database import db
 PRACTICE_DATA = get_practice_data(3)
 PRACTICE_NAME = PRACTICE_DATA.get("practice_name", "")
 TASKS = PRACTICE_DATA.get("tasks", {})
-
 
 router = Router()
 
@@ -168,6 +167,17 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
         return
 
     await state.clear()
-    await db.update_current_activity(user_id=str(message.from_user.id), current_practice=4)
-    await message.answer("✅ Поздравляем! Вы успешно выполнили все задания практики",
-                         reply_markup=menu_keyboard())
+
+    user_id = message.from_user.id
+    has_done = (await db.get_current_practice(user_id) > 3)
+    await db.update_current_activity(user_id=str(user_id), current_practice=4)
+
+    if not has_done:
+        await db.update_points(user_id=str(message.from_user.id), points=settings.PRACTICE_POINTS)
+        return await message.answer(
+            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {
+                settings.PRACTICE_POINTS} 🔆",
+            reply_markup=menu_keyboard())
+    else:
+        return await message.answer(f"✅ Поздравляем! Вы успешно повторили все задания практики\n\n",
+                                    reply_markup=menu_keyboard())

@@ -21,8 +21,8 @@ router = Router()
 @router.callback_query(F.data == "test5")
 async def test5_selected(callback_query: CallbackQuery, state: FSMContext):
     user_id = str(callback_query.from_user.id)
-    await pre_test_state(callback_query, state, user_id,
-                         test_number=5, cur_activity_num=5, test_state=Test5State(), test_name=TEST_NAME)
+    return await pre_test_state(callback_query, state, user_id,
+                                test_number=5, cur_activity_num=5, test_state=Test5State(), test_name=TEST_NAME)
 
 
 @router.callback_query(F.data == "start_test", Test5State.QUESTION1)
@@ -34,12 +34,12 @@ async def send_test_question1(callback_query: CallbackQuery, state: FSMContext):
     await state.update_data(prev_results=previous_results)
     question_data = QUESTIONS["question1"]
     text = format_question_text(question_data)
-    await callback_query.message.edit_text(text, reply_markup=answer_keyboard())
+    return await callback_query.message.edit_text(text, reply_markup=answer_keyboard())
 
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION1)
 async def handle_test_answer1(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -53,7 +53,7 @@ async def handle_test_answer1(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION2)
 async def handle_test_answer2(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -67,7 +67,7 @@ async def handle_test_answer2(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION3)
 async def handle_test_answer3(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -81,7 +81,7 @@ async def handle_test_answer3(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION4)
 async def handle_test_answer4(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -95,7 +95,7 @@ async def handle_test_answer4(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION5)
 async def handle_test_answer5(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -109,7 +109,7 @@ async def handle_test_answer5(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.in_(OPTIONS), Test5State.QUESTION6)
 async def handle_test_answer6(callback_query: CallbackQuery, state: FSMContext):
-    await process_test_answer(
+    return await process_test_answer(
         callback_query,
         state,
         test_number=5,
@@ -135,5 +135,5 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     total = len(answers)
     correct_count = sum(1 for v in answers.values() if v)
     score = round((correct_count / total) * 100, 2) if total else 0.0
-    await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за участие!",
-                                        reply_markup=menu_keyboard())
+    return await callback_query.message.answer(f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за участие!",
+                                               reply_markup=menu_keyboard())

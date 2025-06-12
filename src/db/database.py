@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from src.bot.handlers import settings
 from src.db.config import (DB_NAME, MONGO_URI, RESULTS_COLLECTION,
                            USERS_COLLECTION)
 
@@ -12,19 +13,32 @@ class Database:
         self.users = self.db[users_collection_name]
         self.results = self.db[results_collection_name]
 
-    async def add_new_user(self, user_id: str, current_theory: int = 1, current_test: int = 1,
-                           current_practice: int = 2):
+    async def add_new_user(self, user_id: str, username: str, current_theory: int = 1, current_test: int = 1,
+                           current_practice: int = 2, day_points: int = 0, all_points: int = 0):
         user = await self.users.find_one({"_id": f'{user_id}'})
         if user is None:
             new_user = {
                 "_id": f'{user_id}',
+                "username": username,
                 "current_theory": current_theory,
                 "current_test": current_test,
                 "current_practice": current_practice,
+                "day_points": day_points,
+                "all_points": all_points,
                 # средняя оценка за все тесты (считается после прохождения всех тестов)
-                "average_score": 0.0
+                "average_score": 0.0,
+                "stickers": [False] * settings.TOTAL_STICKERS,
             }
             return await self.users.insert_one(new_user)
+
+    async def update_points(self, user_id: str, points: int):
+        try:
+            await self.users.update_one(
+                {"_id": f'{user_id}'},
+                {"$inc": {"day_points": points, "all_points": points}}
+            )
+        except Exception as e:
+            print(f"An error occurred while updating points: {e}")
 
     async def update_current_activity(self, user_id: str, current_theory: int = None, current_test: int = None,
                                       current_practice: int = None):
@@ -88,6 +102,73 @@ class Database:
                       "test": user_info["current_test"],
                       "practice": user_info["current_practice"]}
         return activities
+
+    async def get_user_statistics(self, user_id: str):
+        try:
+            user_info = await self.users.find_one({"_id": f'{user_id}'})
+            if user_info:
+                return {
+                    "current_theory": user_info.get("current_theory", 0),
+                    "current_test": user_info.get("current_test", 0),
+                    "current_practice": user_info.get("current_practice", 0),
+                }
+            else:
+                return None
+
+        except Exception as e:
+            print(f"An error occurred while fetching user statistics: {e}")
+            return None
+
+    async def get_all_users(self):
+        try:
+            users_cursor = self.users.find({})
+            users_list = await users_cursor.to_list(length=None)
+            return users_list
+        except Exception as e:
+            print(f"An error occurred while fetching all users: {e}")
+
+    async def try_spend_points(self, user_id: str, price: int) -> bool:
+        result = await self.users.update_one(
+            {"_id": f'{user_id}', "all_points": {"$gte": price}},
+            {"$inc": {"all_points": -price}}
+        )
+        return result.modified_count == 1
+
+    async def get_all_points(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("all_points", 0)
+
+    async def get_day_points(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("day_points", 0)
+
+    async def get_current_theory(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_theory", 0)
+
+    async def get_current_test(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_test", 0)
+
+    async def get_current_practice(self, user_id: str) -> int:
+        user = await self.users.find_one({"_id": f'{user_id}'})
+        return user.get("current_practice", 0)
+
+    async def is_sticker_owned(self, user_id: str, sticker_number: int):
+        user = await self.users.find_one({"_id": str(user_id)})
+        stickers = user["stickers"]
+        return stickers[sticker_number - 1] == True
+
+    async def set_sticker_owned(self, user_id: str, sticker_number: int):
+        await self.users.update_one(
+            {"_id": str(user_id)},
+            {"$set": {f"stickers.{sticker_number - 1}": True}}
+        )
+
+    async def are_all_stickers_owned(self, user_id: str) -> bool:
+        user = await self.users.find_one({"_id": str(user_id)})
+        stickers = user.get("stickers", [])
+        return all(stickers)
 
     async def close(self):
         self.client.close()
