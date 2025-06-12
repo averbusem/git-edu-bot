@@ -169,11 +169,15 @@ async def shop_keyboard(user_id: str, photo_number: int):
         keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
 
     if await db.is_sticker_owned(user_id, photo_number):
-        keyboard.add(InlineKeyboardButton(text="Показать", callback_data=f"show_{photo_number}"))
+        keyboard.add(InlineKeyboardButton(text="Получить", callback_data=f"show_{photo_number}"))
     else:
         keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
 
     if photo_number < settings.TOTAL_STICKERS:
         keyboard.add(InlineKeyboardButton(text="➡️", callback_data=f"next_{photo_number + 1}"))
+
+    keyboard.row(
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu_answer")
+    )
 
     return keyboard.as_markup()

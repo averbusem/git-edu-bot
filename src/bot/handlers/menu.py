@@ -17,6 +17,10 @@ async def menu_button(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "main_menu_answer")
 async def menu_button(callback_query: CallbackQuery, state: FSMContext):
     await state.clear()
+    chat_id = callback_query.message.chat.id
+    message_id = callback_query.message.message_id
+    await callback_query.bot.delete_message(chat_id, message_id)
+    await callback_query.bot.delete_message(chat_id, message_id - 1)
     await callback_query.message.answer("📋 <b>Главное меню</b> — выберите раздел:",
                                         reply_markup=start_keyboard())
     await callback_query.answer()
