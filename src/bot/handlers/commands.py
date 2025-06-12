@@ -1,3 +1,5 @@
+import os
+
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -27,10 +29,19 @@ async def shop_command(message: Message):
 
     await message.answer(f"🛒<b>Магазин</b>\n\n{user_name}, здесь Вы можете приобрести забавные стикеры про git за полученные 🔆")
 
-    if await db.is_sticker_owned((str(user_id)), 1):
-        photo_path = "../data/shop/unlocked/1.jpg"
-    else:
-        photo_path = "../data/shop/locked/1.jpg"
+    photo_num = f"{1}.jpg"
 
-    photo = FSInputFile(photo_path)
-    await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1), caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")
+    if await db.is_sticker_owned((str(user_id)), 1):
+        photo_path_pattern = os.path.abspath("data/shop/unlocked/")
+        photo_path = os.path.join(photo_path_pattern, photo_num)
+        # photo_path = "../data/shop/locked/1.jpg"
+        photo = FSInputFile(photo_path)
+        await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1))
+
+    else:
+        photo_path_pattern = os.path.abspath("data/shop/locked/")
+        photo_path = os.path.join(photo_path_pattern, photo_num)
+        # photo_path = "../data/shop/unlocked/1.jpg"
+        photo = FSInputFile(photo_path)
+        await message.answer_photo(photo=photo, reply_markup=await shop_keyboard(str(user_id), 1),
+                                   caption=f"Стоимость: {settings.STICKER_PRICES[0]}🔆\n\n У вас: {all_points}🔆")

@@ -1,3 +1,5 @@
+import os
+
 from aiogram import Router
 from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 
@@ -10,14 +12,17 @@ router = Router()
 
 async def send_photo(callback_query: CallbackQuery, photo_number: int):
     user_id = callback_query.from_user.id
+    photo_num = f"{photo_number}.jpg"
     if await db.is_sticker_owned((str(user_id)), photo_number):
-        photo_path = f"../data/shop/unlocked/{photo_number}.jpg"
+        photo_path_pattern = os.path.abspath("data/shop/unlocked/")
+        photo_path = os.path.join(photo_path_pattern, photo_num)
         photo = FSInputFile(photo_path)
         media = InputMediaPhoto(media=photo)
         await callback_query.message.edit_media(media, reply_markup=await shop_keyboard(str(user_id), photo_number))
 
     else:
-        photo_path = f"../data/shop/locked/{photo_number}.jpg"
+        photo_path_pattern = os.path.abspath("data/shop/locked/")
+        photo_path = os.path.join(photo_path_pattern, photo_num)
         photo = FSInputFile(photo_path)
         all_points = await db.get_all_points(user_id)
         media = InputMediaPhoto(
@@ -50,7 +55,9 @@ async def buy_sticker(callback_query: CallbackQuery):
 
     await db.set_sticker_owned(user_id, sticker_number)
     await send_photo(callback_query, sticker_number)
-    sticker_path = f"../data/shop/stickers/{sticker_number}.webp"
+    sticker_num = f"{sticker_number}.webp"
+    sticker_path_pattern = os.path.abspath("data/shop/stickers/")
+    sticker_path = os.path.join(sticker_path_pattern, sticker_num)
     await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
 
     if await db.are_all_stickers_owned(user_id):
@@ -65,6 +72,8 @@ async def buy_sticker(callback_query: CallbackQuery):
 @router.callback_query(lambda c: c.data.startswith("show_"))
 async def show_sticker(callback_query: CallbackQuery):
     sticker_number = int(callback_query.data.split("_")[1])
-    sticker_path = f"../data/shop/stickers/{sticker_number}.webp"
+    sticker_num = f"{sticker_number}.webp"
+    sticker_path_pattern = os.path.abspath("data/shop/stickers/")
+    sticker_path = os.path.join(sticker_path_pattern, sticker_num)
     await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
     await callback_query.answer()
