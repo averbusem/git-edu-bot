@@ -179,7 +179,7 @@ async def handle_practice_answer6(message: Message, state: FSMContext):
         user_id=str(message.from_user.id),
         current_practice=7
     )
-    await message.answer(
+    return await message.answer(
         "✅ Поздравляем! Вы успешно выполнили все задания практики",
         reply_markup=menu_keyboard()
     )
