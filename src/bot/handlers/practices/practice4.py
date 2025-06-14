@@ -76,7 +76,7 @@ def check_task5(answer: str) -> str | None:
     """Проверка переноса коммита (cherry-pick)."""
     lines = answer.splitlines()
     if len(lines) >= 2 and (lines[0].endswith("(HEAD -> main) Add file2.txt") or lines[0].endswith(
-            "(HEAD -> master) Add file2.txt")) and lines[1].endswith("Add file.txt"):
+            "(HEAD -> master) Add file2.txt")) and (lines[1].endswith("Update main") or lines[1].endswith("Update master")):
         return None
     elif "fatal: bad revision" in answer.lower():
         return "bad_revision"
