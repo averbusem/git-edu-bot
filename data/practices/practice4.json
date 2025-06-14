@@ -82,7 +82,7 @@
         "Переключитесь на ветку main. Найдите хеш коммита из new_branch2, где был создан file2.txt. Перенесите этот коммит в main с помощью git cherry-pick <хеш>. Убедитесь, что файл file2.txt появился в main, и пришлите вывод команды::\n",
         "<pre><code>git log --oneline -n 2</code></pre>"
       ],
-      "expected": "XXXXXXX (HEAD -> main) Add file2.txt\nXXXXXXX Add file.txt",
+      "expected": "XXXXXXX (HEAD -> main) Add file2.txt\nXXXXXXX Update master",
       "errors": {
         "bad_revision": "❌ fatal: bad revision '...'",
         "file_not_appeared": "❌ Файл file2.txt не появился"
