@@ -22,7 +22,7 @@ def check_task1(answer: str) -> str | None:
         return "invalid_directory"
     elif answer == "-":
         return "empty_output"
-    elif "origin https://github.com/" in answer and "(fetch)" in answer and "origin https://github.com/" in answer and "(push)" in answer:
+    elif "origin  https://github.com/" in answer and "(fetch)" in answer and "origin  https://github.com/" in answer and "(push)" in answer:
         return None
     return "other"
 
@@ -33,7 +33,7 @@ def check_task2(answer: str) -> str | None:
         return "invalid_directory"
     elif "fatal: ambiguous argument 'origin/main': unknown revision or path not in the working tree" in answer:
         return "invalid_names"
-    elif "commit" in answer and "(HEAD -> main, origin/main, origin/HEAD)" in answer and "Author:" in answer and "Date:" in answer:
+    elif "commit" in answer and "(HEAD -> main, origin/main)" in answer and "Author:" in answer and "Date:" in answer:
         if "Add file.txt" in answer:
             return None
         else:
@@ -49,7 +49,7 @@ def check_task3(answer: str) -> str | None:
         return "branch_is_behind"
     elif "fatal: unable to access" in answer:
         return "connection_problem"
-    elif "On branch master" in answer and "Your branch is up to date with 'origin/master'" in answer and "nothing to commit, working tree clean" in answer:
+    elif "On branch main" in answer and "Your branch is up to date with 'origin/main'" in answer and "nothing to commit, working tree clean" in answer:
         return None
     return "other"
 
@@ -58,7 +58,7 @@ def check_task4(answer: str) -> str | None:
     """Проверка вывода 'git branch -r'"""
     if "fatal: not a git repository" in answer:
         return "invalid_directory"
-    elif "origin/HEAD -> origin/main" in answer and "origin/main" in answer:
+    elif "origin/main" in answer:
         if "origin/newbranch" in answer:
             return None
         else:
