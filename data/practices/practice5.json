@@ -75,7 +75,7 @@
         "Теперь вновь перейдите в локальный репозиторий, загрузите изменения (<code>git pull</code>) и выполните следующую команду, прикрепив её вывод:\n",
         "<pre><code>git branch -r</code></pre>"
       ],
-      "expected": "  origin/HEAD -> origin/main\n  origin/main\n  origin/newbranch",
+      "expected": "  origin/main\n  origin/newbranch",
       "errors": {
         "invalid_directory": "❌ fatal: not a git repository (or any of the parent directories)",
         "branch_missing": "❌ origin/newbranch отсутствует",
