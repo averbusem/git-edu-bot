@@ -38,7 +38,7 @@ def check_task2(answer: str) -> str | None:
 
 def check_task3(answer: str) -> str | None:
     """Проверка вывода 'git log --oneline -n 1' после revert"""
-    if "Revert \"Add task3.txt\"" in answer:
+    if "Revert" in answer:
         return None
     elif "conflict" in answer.lower():
         return "conflict"
