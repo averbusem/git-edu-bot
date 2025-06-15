@@ -38,7 +38,7 @@ def check_task2(answer: str) -> str | None:
 
 def check_task3(answer: str) -> str | None:
     """Проверка вывода 'git log --oneline -n 1' после revert"""
-    if "Revert \"Add task3.txt\"" in answer:
+    if "Revert" in answer:
         return None
     elif "conflict" in answer.lower():
         return "conflict"
@@ -61,7 +61,7 @@ def check_task4(answer: str) -> str | None:
 def check_task5(answer: str) -> str | None:
     """Проверка содержимого conflict.txt после merge с обоими вариантами"""
     lines = [line.strip() for line in answer.splitlines() if line.strip()]
-    if "Ariana" in lines and "Taylor" in lines:
+    if "Ariana" in lines and "Taylor" in lines and "Kendrick":
         return None
     elif "Merge conflict" in answer:
         return "merge_failed"
