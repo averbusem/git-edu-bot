@@ -76,7 +76,7 @@ def check_task5(answer: str) -> str | None:
     """Проверка переноса коммита (cherry-pick)."""
     lines = answer.splitlines()
     if len(lines) >= 2 and (lines[0].endswith("(HEAD -> main) Add file2.txt") or lines[0].endswith(
-            "(HEAD -> master) Add file2.txt")) and lines[1].endswith("Add file.txt"):
+            "(HEAD -> master) Add file2.txt")) and (lines[1].endswith("Update main") or lines[1].endswith("Update master")):
         return None
     elif "fatal: bad revision" in answer.lower():
         return "bad_revision"
@@ -183,8 +183,7 @@ async def handle_practice_answer5(message: Message, state: FSMContext):
     if not has_done:
         await db.update_points(user_id=str(message.from_user.id), points=settings.PRACTICE_POINTS)
         return await message.answer(
-            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {
-                settings.PRACTICE_POINTS} 🔆",
+            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {settings.PRACTICE_POINTS} 🔆",
             reply_markup=menu_keyboard())
     else:
         return await message.answer(f"✅ Поздравляем! Вы успешно повторили все задания практики\n\n",
