@@ -168,12 +168,12 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
 
     await state.clear()
 
-    user_id = message.from_user.id
+    user_id = str(message.from_user.id)
     has_done = (await db.get_current_practice(user_id) > 3)
     await db.update_current_activity(user_id=str(user_id), current_practice=4)
 
     if not has_done:
-        await db.update_points(user_id=str(message.from_user.id), points=settings.PRACTICE_POINTS)
+        await db.update_points(user_id=user_id, points=settings.PRACTICE_POINTS)
         return await message.answer(
             f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {
                 settings.PRACTICE_POINTS} 🔆",

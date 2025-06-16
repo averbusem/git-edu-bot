@@ -36,12 +36,12 @@ async def theory1_step2(callback: CallbackQuery, state: FSMContext):
 @remove_last_keyboard
 async def theory1_step3(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message3"])
-    user_id = callback.from_user.id
+    user_id = str(callback.from_user.id)
     has_done = (await db.get_current_theory(user_id) > 1)
     await db.update_current_activity(user_id=callback.from_user.id, current_theory=2)
 
     if not has_done:
-        await db.update_points(user_id=callback.from_user.id, points=settings.THEORY_POINTS)
+        await db.update_points(user_id=user_id, points=settings.THEORY_POINTS)
         return callback.message.answer(
             f"Урок завершен! Вы получили {
                 settings.THEORY_POINTS} 🔆\n\nПереходите к тесту или заданию.",

@@ -33,10 +33,15 @@ class Database:
 
     async def update_points(self, user_id: str, points: int):
         try:
+            user = await self.users.find_one({"_id": str(user_id)})
+            if not user:
+                return
+
             await self.users.update_one(
-                {"_id": f'{user_id}'},
+                {"_id": str(user_id)},
                 {"$inc": {"day_points": points, "all_points": points}}
             )
+
         except Exception as e:
             print(f"An error occurred while updating points: {e}")
 
