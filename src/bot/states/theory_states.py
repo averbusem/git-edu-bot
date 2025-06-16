@@ -36,3 +36,10 @@ class Theory6State(StatesGroup):
     MESSAGE5 = State()
     MESSAGE6 = State()
     MESSAGE7 = State()
+
+class Theory7State(StatesGroup):
+    MESSAGE2 = State()
+    MESSAGE3 = State()
+    MESSAGE4 = State()
+    MESSAGE5 = State()
+    MESSAGE6 = State()
