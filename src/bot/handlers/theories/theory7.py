@@ -2,10 +2,11 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.keyboards.user_keyboards import menu_keyboard, next_massage_keyboard
+from src.bot.keyboards.user_keyboards import (menu_keyboard,
+                                              next_massage_keyboard)
 from src.bot.states.theory_states import Theory7State
 from src.bot.utils.data_loader import get_theory_data
-from src.bot.utils.decorators import clear_last_keyboard
+from src.bot.utils.decorators import remove_last_keyboard
 from src.db.database import db
 
 THEORY_DATA = get_theory_data(7)
@@ -15,7 +16,6 @@ router = Router()
 
 
 @router.callback_query(F.data == "theory7")
-@clear_last_keyboard
 async def start_theory7(callback: CallbackQuery, state: FSMContext):
     user_id = str(callback.from_user.id)
     current_activity = await db.get_current_activity(user_id=user_id)
@@ -38,7 +38,7 @@ async def start_theory7(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "next", Theory7State.MESSAGE2)
-@clear_last_keyboard
+@remove_last_keyboard
 async def theory7_step2(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory7State.MESSAGE3)
     new_message = await callback.message.answer(
@@ -49,7 +49,7 @@ async def theory7_step2(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "next", Theory7State.MESSAGE3)
-@clear_last_keyboard
+@remove_last_keyboard
 async def theory7_step3(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory7State.MESSAGE4)
     new_message = await callback.message.answer(
@@ -60,7 +60,7 @@ async def theory7_step3(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "next", Theory7State.MESSAGE4)
-@clear_last_keyboard
+@remove_last_keyboard
 async def theory7_step4(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory7State.MESSAGE5)
     new_message = await callback.message.answer(
@@ -71,7 +71,7 @@ async def theory7_step4(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "next", Theory7State.MESSAGE5)
-@clear_last_keyboard
+@remove_last_keyboard
 async def theory7_step5(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Theory7State.MESSAGE6)
     new_message = await callback.message.answer(
@@ -82,7 +82,7 @@ async def theory7_step5(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data == "next", Theory7State.MESSAGE6)
-@clear_last_keyboard
+@remove_last_keyboard
 async def theory7_step6(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(THEORY_MESSAGES["message6"])
     await db.update_current_activity(user_id=str(callback.from_user.id), current_theory=8)
