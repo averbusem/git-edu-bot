@@ -175,6 +175,10 @@ class Database:
         stickers = user.get("stickers", [])
         return all(stickers)
 
+    async def reset_day_points_all(self):
+        print("Resetting day_points for all users...")
+        await self.users.update_many({}, {"$set": {"day_points": 0}})
+
     async def close(self):
         self.client.close()
 
