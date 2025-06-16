@@ -8,7 +8,7 @@ def get_handlers_router() -> Router:
                                   rating, shop)
     from src.bot.handlers.practices import get_practice_router
     from src.bot.handlers.tests import get_tests_router
-    from src.bot.handlers.theories import get_theory_router, theory7
+    from src.bot.handlers.theories import get_theory_router
 
     router = Router()
     router.include_router(commands.router)
@@ -21,7 +21,6 @@ def get_handlers_router() -> Router:
     router.include_router(get_theory_router())
     router.include_router(get_tests_router())
 
-    router.include_router(theory7.router)
 
     # Здесь будут остальные подключения роутеров из файлов в handlers
     return router
