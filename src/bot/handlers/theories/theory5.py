@@ -2,10 +2,10 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers import settings
 from src.bot.keyboards.user_keyboards import (menu_keyboard,
                                               next_massage_keyboard)
 from src.bot.states.theory_states import Theory5State
+from src.bot.utils import settings
 from src.bot.utils.data_loader import get_theory_data
 from src.bot.utils.decorators import remove_last_keyboard
 from src.db.database import db

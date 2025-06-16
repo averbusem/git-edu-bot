@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.bot.handlers import settings
+from src.bot.utils import settings
 from src.db.database import db
 
 

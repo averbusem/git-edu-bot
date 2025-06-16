@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from src.bot.handlers import settings
+from src.bot.utils import settings
 from src.db.config import (DB_NAME, MONGO_URI, RESULTS_COLLECTION,
                            USERS_COLLECTION)
 

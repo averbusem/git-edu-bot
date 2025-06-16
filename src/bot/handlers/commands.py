@@ -5,8 +5,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile, Message
 
-from src.bot.handlers import settings
 from src.bot.keyboards.user_keyboards import shop_keyboard, start_keyboard
+from src.bot.utils import settings
 from src.bot.utils.decorators import remove_last_keyboard
 from src.db.database import db
 
