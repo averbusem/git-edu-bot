@@ -8,7 +8,7 @@
         "Создайте новый файл task1.txt с текстом \"Test stash\" и добавьте его в индекс командой git add. Не создавая коммит, сохраните изменения в stash с сообщением \"First stash\". Убедитесь, что рабочая директория чистая, и пришлите вывод команды:\n",
         "<pre><code>git stash list</code></pre>\n\n"
       ],
-      "expected": ["stash@{0}: On main: First stash", "stash@{0}: On master: First stash"],
+      "expected": ["stash@{0}: On main: First stash"],
       "errors": {
         "no_stash": "❌ Stash не создан",
         "empty_output": "❌ Пустой вывод",
@@ -28,7 +28,7 @@
         "<pre><code>git log --grep=\"HSE\" -i --oneline</code></pre>\n\n",
         "Примечание: если вывод пустой, отправьте символ \"-\""
       ],
-      "expected": ["XXXXXX (HEAD -> master) HSE hse", "XXXXXX (HEAD -> main) HSE hse", "XXXXXX HSE hse"],
+      "expected": ["XXXXXX (HEAD -> main) HSE hse", "XXXXXX HSE hse"],
       "errors": {
         "empty_output": "❌ Пустой вывод",
         "other": "❌ Другое"

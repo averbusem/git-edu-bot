@@ -58,3 +58,12 @@ class Test6State(StatesGroup):
     QUESTION5 = State()
     QUESTION6 = State()
     QUESTION7 = State()
+    
+class Test7State(StatesGroup):
+    QUESTION1 = State()
+    QUESTION2 = State()
+    QUESTION3 = State()
+    QUESTION4 = State()
+    QUESTION5 = State()
+    QUESTION6 = State()
+    QUESTION7 = State()

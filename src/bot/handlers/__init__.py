@@ -21,5 +21,6 @@ def get_handlers_router() -> Router:
     router.include_router(get_theory_router())
     router.include_router(get_tests_router())
 
+
     # Здесь будут остальные подключения роутеров из файлов в handlers
     return router
