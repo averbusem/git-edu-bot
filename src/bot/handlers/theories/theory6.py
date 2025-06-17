@@ -2,7 +2,6 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers.final_gift import send_congratulations
 from src.bot.keyboards.user_keyboards import (menu_keyboard,
                                               next_massage_keyboard)
 from src.bot.states.theory_states import Theory6State
@@ -98,16 +97,13 @@ async def theory6_step7(callback: CallbackQuery, state: FSMContext):
 
     if not has_done:
         await db.update_points(user_id=user_id, points=settings.THEORY_POINTS)
-        await callback.message.answer(
+        return await callback.message.answer(
             f"Урок завершен! Вы получили {
                 settings.THEORY_POINTS} 🔆\n\nПереходите к тесту или заданию.",
             reply_markup=menu_keyboard()
         )
     else:
-        await callback.message.answer(
+        return await callback.message.answer(
             f"Урок повторен!\n\nПереходите к тесту или заданию.",
             reply_markup=menu_keyboard()
         )
-
-    if await db.get_current_test(user_id) == 7 and await db.get_current_practice(user_id) == 7:
-        await send_congratulations(callback.message, user_id)

@@ -110,6 +110,7 @@ def practice_list_keyboard():
         ("Практика 4. Ветвление и слияние", "practice4"),
         ("Практика 5. Работа с удалёнными репозиториями", "practice5"),
         ("Практика 6. Отмена изменений и исправление ошибок", "practice6"),
+        ("Практика 7. Продвинутые возможности Git", "practice7")
     ]
 
     for title, callback_data in practices:

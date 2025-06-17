@@ -2,7 +2,6 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers.final_gift import send_congratulations
 from src.bot.keyboards.user_keyboards import answer_keyboard, menu_keyboard
 from src.bot.states.test_states import Test6State
 from src.bot.utils import settings
@@ -154,13 +153,10 @@ async def handle_test6_answer7(callback_query: CallbackQuery, state: FSMContext)
     if not has_done:
         points = round(score / 100 * settings.TEST_POINTS)
         await db.update_points(user_id=user_id, points=points)
-        await callback_query.message.answer(
+        return await callback_query.message.answer(
             f"Тест завершён на оценку <b>{score}%</b>\n\nВы получили {points} 🔆 Спасибо за участие!",
             reply_markup=menu_keyboard())
     else:
-        await callback_query.message.answer(
+        return await callback_query.message.answer(
             f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за повторное прохождение!",
             reply_markup=menu_keyboard())
-
-    if await db.get_current_theory(user_id) == 7 and await db.get_current_practice(user_id) == 7:
-        await send_congratulations(callback_query.message, user_id)

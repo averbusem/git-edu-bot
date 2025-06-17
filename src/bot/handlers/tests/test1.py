@@ -159,10 +159,10 @@ async def handle_test_answer7(callback_query: CallbackQuery, state: FSMContext):
     if not has_done:
         points = round(score / 100 * settings.TEST_POINTS)
         await db.update_points(user_id=user_id, points=points)
-        await callback_query.message.answer(
+        return await callback_query.message.answer(
             f"Тест завершён на оценку <b>{score}%</b>\n\nВы получили {points} 🔆 Спасибо за участие!",
             reply_markup=menu_keyboard())
     else:
-        await callback_query.message.answer(
+        return await callback_query.message.answer(
             f"Тест завершён на оценку <b>{score}%</b>\n\nСпасибо за повторное прохождение!",
             reply_markup=menu_keyboard())

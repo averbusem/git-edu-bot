@@ -2,8 +2,10 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from src.bot.handlers.final_gift import send_congratulations
 from src.bot.keyboards.user_keyboards import menu_keyboard
 from src.bot.states.practice_states import Practice7State
+from src.bot.utils import settings
 from src.bot.utils.data_loader import get_practice_data
 from src.bot.utils.practice_formatter import format_task_feedback
 from src.bot.utils.practice_steps import pre_practice_state
@@ -28,18 +30,18 @@ def check_task1(answer: str) -> str | None:
 
 
 def check_task2(answer: str) -> str | None:
-    if "HSE" in answer.upper(): 
-        return None 
-    elif answer.strip() == "-": 
-        return "empty_output" 
+    if "HSE" in answer.upper():
+        return None
+    elif answer.strip() == "-":
+        return "empty_output"
     return "other"
 
 
 def check_task3(answer: str) -> str | None:
-    if "One.txt:TaskOne GIT" in answer and "Three.txt:TaskThree GIT" in answer: 
-       return None 
-    elif not answer.strip(): 
-       return "empty_output" 
+    if "One.txt:TaskOne GIT" in answer and "Three.txt:TaskThree GIT" in answer:
+        return None
+    elif not answer.strip():
+        return "empty_output"
     return "other"
 
 
@@ -51,7 +53,6 @@ def check_task4(answer: str) -> str | None:
     elif "fatal:" in answer.lower():
         return "wrong_line"
     return "other"
-
 
 
 @router.callback_query(F.data == "practice7")
@@ -72,6 +73,7 @@ async def send_practice_question1(callback_query: CallbackQuery, state: FSMConte
     await state.set_state(Practice7State.TASK1)
     text = "".join(TASKS["task1"]["task_text"])
     await callback_query.message.edit_text(text)
+
 
 @router.message(Practice7State.TASK1)
 async def handle_practice_answer1(message: Message, state: FSMContext):
@@ -121,11 +123,19 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
         return
 
     await state.clear()
-    await db.update_current_activity(
-        user_id=str(message.from_user.id),
-        current_practice=8
-    )
-    await message.answer(
-        "✅ Поздравляем! Вы успешно выполнили все задания практики",
-        reply_markup=menu_keyboard()
-    )
+
+    user_id = str(message.from_user.id)
+    has_done = (await db.get_current_practice(user_id) > 7)
+    await db.update_current_activity(user_id=str(message.from_user.id), current_practice=8)
+
+    if not has_done:
+        await db.update_points(user_id=user_id, points=settings.PRACTICE_POINTS)
+        await message.answer(
+            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {
+                settings.PRACTICE_POINTS} 🔆",
+            reply_markup=menu_keyboard())
+        if await db.get_current_theory(user_id) == 8 and await db.get_current_test(user_id) == 8:
+            await send_congratulations(message, user_id)
+    else:
+        await message.answer(f"✅ Поздравляем! Вы успешно повторили все задания практики\n\n",
+                             reply_markup=menu_keyboard())
