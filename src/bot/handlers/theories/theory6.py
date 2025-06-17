@@ -110,4 +110,4 @@ async def theory6_step7(callback: CallbackQuery, state: FSMContext):
         )
 
     if await db.get_current_test(user_id) == 7 and await db.get_current_practice(user_id) == 7:
-        await send_congratulations(callback.message)
+        await send_congratulations(callback.message, user_id)

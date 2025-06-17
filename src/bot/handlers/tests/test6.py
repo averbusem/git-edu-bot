@@ -163,4 +163,4 @@ async def handle_test6_answer7(callback_query: CallbackQuery, state: FSMContext)
             reply_markup=menu_keyboard())
 
     if await db.get_current_theory(user_id) == 7 and await db.get_current_practice(user_id) == 7:
-        await send_congratulations(callback_query.message)
+        await send_congratulations(callback_query.message, user_id)

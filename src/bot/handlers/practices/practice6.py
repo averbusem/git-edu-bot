@@ -193,4 +193,4 @@ async def handle_practice_answer6(message: Message, state: FSMContext):
                              reply_markup=menu_keyboard())
 
     if await db.get_current_theory(user_id) == 7 and await db.get_current_test(user_id) == 7:
-        await send_congratulations(message)
+        await send_congratulations(message, user_id)
