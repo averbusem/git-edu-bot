@@ -3,8 +3,8 @@ import os
 from aiogram import Router
 from aiogram.types import CallbackQuery, FSInputFile, InputMediaPhoto
 
-from src.bot.handlers import settings
 from src.bot.keyboards.user_keyboards import shop_keyboard
+from src.bot.utils import settings
 from src.db.database import db
 
 router = Router()
@@ -66,14 +66,4 @@ async def buy_sticker(callback_query: CallbackQuery):
             f'Поздравляем! Вы собрали все стикеры!\n\n Ваш заслуженный <a href="{link}">стикерпак</a> 🎉',
         )
 
-    await callback_query.answer()
-
-
-@router.callback_query(lambda c: c.data.startswith("show_"))
-async def show_sticker(callback_query: CallbackQuery):
-    sticker_number = int(callback_query.data.split("_")[1])
-    sticker_num = f"{sticker_number}.webp"
-    sticker_path_pattern = os.path.abspath("data/shop/stickers/")
-    sticker_path = os.path.join(sticker_path_pattern, sticker_num)
-    await callback_query.message.answer_sticker(sticker=FSInputFile(sticker_path))
     await callback_query.answer()

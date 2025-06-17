@@ -1,8 +1,8 @@
 from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
-from src.bot.handlers import settings
 from src.bot.keyboards.user_keyboards import menu_keyboard, rating_keyboard
+from src.bot.utils import settings
 from src.db.database import db
 
 router = Router()

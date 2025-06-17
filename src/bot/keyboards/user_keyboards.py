@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from src.bot.handlers import settings
+from src.bot.utils import settings
 from src.db.database import db
 
 
@@ -110,6 +110,7 @@ def practice_list_keyboard():
         ("Практика 4. Ветвление и слияние", "practice4"),
         ("Практика 5. Работа с удалёнными репозиториями", "practice5"),
         ("Практика 6. Отмена изменений и исправление ошибок", "practice6"),
+        ("Практика 7. Продвинутые возможности Git", "practice7")
     ]
 
     for title, callback_data in practices:
@@ -161,9 +162,7 @@ async def shop_keyboard(user_id: str, photo_number: int):
     if photo_number > 1:
         keyboard.add(InlineKeyboardButton(text="⬅️", callback_data=f"prev_{photo_number - 1}"))
 
-    if await db.is_sticker_owned(user_id, photo_number):
-        keyboard.add(InlineKeyboardButton(text="Получить", callback_data=f"show_{photo_number}"))
-    else:
+    if not await db.is_sticker_owned(user_id, photo_number):
         keyboard.add(InlineKeyboardButton(text="Купить", callback_data=f"buy_{photo_number}"))
 
     if photo_number < settings.TOTAL_STICKERS:

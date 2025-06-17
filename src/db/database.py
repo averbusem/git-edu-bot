@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from src.bot.handlers import settings
+from src.bot.utils import settings
 from src.db.config import (DB_NAME, MONGO_URI, RESULTS_COLLECTION,
                            USERS_COLLECTION)
 
@@ -33,10 +33,15 @@ class Database:
 
     async def update_points(self, user_id: str, points: int):
         try:
+            user = await self.users.find_one({"_id": str(user_id)})
+            if not user:
+                return
+
             await self.users.update_one(
-                {"_id": f'{user_id}'},
+                {"_id": str(user_id)},
                 {"$inc": {"day_points": points, "all_points": points}}
             )
+
         except Exception as e:
             print(f"An error occurred while updating points: {e}")
 
@@ -169,6 +174,10 @@ class Database:
         user = await self.users.find_one({"_id": str(user_id)})
         stickers = user.get("stickers", [])
         return all(stickers)
+
+    async def reset_day_points_all(self):
+        print("Resetting day_points for all users...")
+        await self.users.update_many({}, {"$set": {"day_points": 0}})
 
     async def close(self):
         self.client.close()
