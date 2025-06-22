@@ -131,8 +131,7 @@ async def handle_practice_answer4(message: Message, state: FSMContext):
     if not has_done:
         await db.update_points(user_id=user_id, points=settings.PRACTICE_POINTS)
         await message.answer(
-            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {
-                settings.PRACTICE_POINTS} 🔆",
+            f"✅ Поздравляем! Вы успешно выполнили все задания практики\n\nВы получили {settings.PRACTICE_POINTS} 🔆",
             reply_markup=menu_keyboard())
         if await db.get_current_theory(user_id) == 8 and await db.get_current_test(user_id) == 8:
             await send_congratulations(message, user_id)
