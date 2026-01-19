@@ -256,50 +256,31 @@ apscheduler>=3.10.0     # Task scheduling
 
 ### Предварительные требования
 
-- Python 3.11+
-- Docker (для запуска MongoDB)
+- Docker и Docker Compose
 - Telegram Bot Token (получить у [@BotFather](https://t.me/BotFather))
 
-### 📥 Установка
+### 📥 Установка и запуск
 
 ```bash
 # 1. Клонируйте репозиторий
-git clone https://github.com/yourusername/git-edu-bot.git
+git clone https://github.com/averbusem/git-edu-bot.git
 cd git-edu-bot
 
-# 2. Создайте виртуальное окружение
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# или
-.\venv\Scripts\activate   # Windows
-
-# 3. Установите зависимости
-pip install -r requirements.txt
-
-# 4. Создайте файл .env
+# 2. Создайте файл .env
 echo "BOT_TOKEN=your_telegram_bot_token" > .env
+
+# 3. Запустите проект
+docker compose up --build -d
 ```
+
+Эта команда запустит:
+- 🗄️ **mongoGitEdu** — контейнер с MongoDB (порт `27017`)
+- 🤖 **bot** — контейнер с Telegram-ботом
 
 ### ⚙️ Конфигурация `.env`
 
 ```env
 BOT_TOKEN=your_telegram_bot_token
-```
-
-> 💡 MongoDB подключается автоматически к `localhost:27017` — дополнительной настройки не требуется.
-
-### 🐳 Запуск MongoDB через Docker
-
-```bash
-docker-compose up -d
-```
-
-Эта команда запустит контейнер `mongoGitEdu` с MongoDB на порту `27017`.
-
-### ▶️ Запуск бота
-
-```bash
-python -m src.main
 ```
 
 
