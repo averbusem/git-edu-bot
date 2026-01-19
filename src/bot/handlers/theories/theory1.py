@@ -43,8 +43,7 @@ async def theory1_step3(callback: CallbackQuery, state: FSMContext):
     if not has_done:
         await db.update_points(user_id=user_id, points=settings.THEORY_POINTS)
         return callback.message.answer(
-            f"Урок завершен! Вы получили {
-                settings.THEORY_POINTS} 🔆\n\nПереходите к тесту или заданию.",
+            f"Урок завершен! Вы получили {settings.THEORY_POINTS} 🔆\n\nПереходите к тесту или заданию.",
             reply_markup=menu_keyboard()
         )
     else:
